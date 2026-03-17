@@ -54,7 +54,7 @@ const LandingPage = () => {
           <div className="bg-gray-800 bg-opacity-50 backdrop-blur-lg p-8 rounded-xl text-center hover:transform hover:scale-105 transition-all">
             <FaChartLine className="text-5xl text-blue-400 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-white mb-2">Real-Time Monitoring</h3>
-            <p className="text-gray-400">Track prices across 5+ major exchanges instantly</p>
+            <p className="text-gray-400">Track prices across 11+ major exchanges instantly</p>
           </div>
           
           <div className="bg-gray-800 bg-opacity-50 backdrop-blur-lg p-8 rounded-xl text-center hover:transform hover:scale-105 transition-all">
@@ -71,8 +71,116 @@ const LandingPage = () => {
           
           <div className="bg-gray-800 bg-opacity-50 backdrop-blur-lg p-8 rounded-xl text-center hover:transform hover:scale-105 transition-all">
             <FaBitcoin className="text-5xl text-yellow-400 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">Multiple Coins</h3>
-            <p className="text-gray-400">Support for BTC, ETH, BNB, SOL and more</p>
+            <h3 className="text-xl font-bold text-white mb-2">24 Cryptocurrencies</h3>
+            <p className="text-gray-400">Support for BTC, ETH, and 22 more coins</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Supported Cryptocurrencies */}
+      <section className="container mx-auto px-6 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Supported <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Cryptocurrencies</span>
+          </h2>
+          <p className="text-xl text-gray-400">Monitor and trade 24 top cryptocurrencies across multiple exchanges</p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {[
+            { symbol: 'BTC', name: 'Bitcoin', emoji: '₿' },
+            { symbol: 'ETH', name: 'Ethereum', emoji: 'Ξ' },
+            { symbol: 'BNB', name: 'Binance', emoji: '🔶' },
+            { symbol: 'SOL', name: 'Solana', emoji: '◎' },
+            { symbol: 'ADA', name: 'Cardano', emoji: '₳' },
+            { symbol: 'XRP', name: 'Ripple', emoji: '✕' },
+            { symbol: 'DOT', name: 'Polkadot', emoji: '●' },
+            { symbol: 'AVAX', name: 'Avalanche', emoji: '🔺' },
+            { symbol: 'MATIC', name: 'Polygon', emoji: '⬡' },
+            { symbol: 'UNI', name: 'Uniswap', emoji: '🦄' },
+            { symbol: 'LINK', name: 'Chainlink', emoji: '🔗' },
+            { symbol: 'LTC', name: 'Litecoin', emoji: 'Ł' },
+            { symbol: 'ATOM', name: 'Cosmos', emoji: '⚛' },
+            { symbol: 'ALGO', name: 'Algorand', emoji: '◬' },
+            { symbol: 'FTM', name: 'Fantom', emoji: '👻' },
+            { symbol: 'SAND', name: 'Sandbox', emoji: '🏖' },
+            { symbol: 'MANA', name: 'Decentraland', emoji: '🌐' },
+            { symbol: 'AAVE', name: 'Aave', emoji: '👻' },
+            { symbol: 'DOGE', name: 'Dogecoin', emoji: '🐕' },
+            { symbol: 'SHIB', name: 'Shiba Inu', emoji: '🐶' },
+            { symbol: 'APT', name: 'Aptos', emoji: '🔷' },
+            { symbol: 'OP', name: 'Optimism', emoji: '🔴' },
+            { symbol: 'ARB', name: 'Arbitrum', emoji: '🔵' },
+            { symbol: 'SUI', name: 'Sui', emoji: '💧' },
+          ].map((coin, idx) => (
+            <div
+              key={coin.symbol}
+              className="bg-gradient-to-br from-gray-800 to-gray-900 p-4 rounded-xl text-center hover:transform hover:scale-110 transition-all cursor-pointer border border-gray-700 hover:border-blue-500"
+              style={{ animationDelay: `${idx * 0.05}s` }}
+            >
+              <div className="text-3xl mb-2">{coin.emoji}</div>
+              <div className="text-lg font-bold text-white">{coin.symbol}</div>
+              <div className="text-xs text-gray-400">{coin.name}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Supported Exchanges */}
+      <section className="container mx-auto px-6 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Powered by <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">11 Major Exchanges</span>
+          </h2>
+          <p className="text-xl text-gray-400">Access the best prices across the world's leading crypto exchanges</p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {[
+            { name: 'Binance', icon: '🟡', tagline: 'World\'s Largest' },
+            { name: 'Coinbase', icon: '🔵', tagline: 'Most Trusted' },
+            { name: 'Kraken', icon: '🟣', tagline: 'Secure Trading' },
+            { name: 'Bybit', icon: '🟠', tagline: 'Advanced Trading' },
+            { name: 'OKX', icon: '⚫', tagline: 'Global Platform' },
+            { name: 'KuCoin', icon: '🟢', tagline: 'People\'s Exchange' },
+            { name: 'Gate.io', icon: '🔷', tagline: 'Altcoin Heaven' },
+            { name: 'Huobi', icon: '🔶', tagline: 'Professional Grade' },
+            { name: 'Gemini', icon: '💎', tagline: 'NY Regulated' },
+            { name: 'Bitfinex', icon: '🟩', tagline: 'Liquidity Leader' },
+            { name: 'Crypto.com', icon: '⚪', tagline: 'Fortune Favors' },
+          ].map((exchange, idx) => (
+            <div
+              key={exchange.name}
+              className="bg-gray-800 bg-opacity-70 backdrop-blur-lg p-6 rounded-xl hover:transform hover:scale-105 transition-all cursor-pointer border-2 border-transparent hover:border-purple-500"
+              style={{ animationDelay: `${idx * 0.1}s` }}
+            >
+              <div className="flex items-center space-x-3 mb-2">
+                <span className="text-4xl">{exchange.icon}</span>
+                <div>
+                  <h3 className="text-xl font-bold text-white">{exchange.name}</h3>
+                  <p className="text-xs text-gray-400">{exchange.tagline}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Exchange Stats */}
+        <div className="mt-12 grid md:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-6 rounded-xl text-center">
+            <div className="text-4xl font-bold text-white mb-2">264</div>
+            <div className="text-gray-200">Price Points Monitored</div>
+            <div className="text-xs text-gray-300 mt-1">24 coins × 11 exchanges</div>
+          </div>
+          <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-6 rounded-xl text-center">
+            <div className="text-4xl font-bold text-white mb-2">5s</div>
+            <div className="text-gray-200">Real-Time Updates</div>
+            <div className="text-xs text-gray-300 mt-1">Instant price synchronization</div>
+          </div>
+          <div className="bg-gradient-to-r from-pink-600 to-pink-800 p-6 rounded-xl text-center">
+            <div className="text-4xl font-bold text-white mb-2">20+</div>
+            <div className="text-gray-200">Daily Opportunities</div>
+            <div className="text-xs text-gray-300 mt-1">Arbitrage chances detected</div>
           </div>
         </div>
       </section>
