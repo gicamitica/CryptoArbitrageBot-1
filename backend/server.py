@@ -340,9 +340,16 @@ async def get_user_trades(current_user: User = Depends(get_current_user)):
 # ==================== ADMIN ROUTES ====================
 
 @api_router.get("/admin/users", response_model=List[User])
-async def get_all_users(admin_user: User = Depends(get_admin_user)):
-    """Get all users (admin only)"""
-    users = await db.users.find({}, {"_id": 0, "password": 0}).to_list(1000)
+async def get_all_users(
+    skip: int = 0, 
+    limit: int = 100,
+    admin_user: User = Depends(get_admin_user)
+):
+    """Get all users with pagination (admin only)"""
+    users = await db.users.find(
+        {}, 
+        {"_id": 0, "password": 0}
+    ).skip(skip).limit(min(limit, 100)).to_list(limit)
     
     for user in users:
         if isinstance(user.get('created_at'), str):
@@ -357,9 +364,20 @@ async def get_admin_stats(admin_user: User = Depends(get_admin_user)):
     total_trades = await db.trades.count_documents({})
     active_users = await db.users.count_documents({"is_active": True})
     
-    # Calculate total volume
-    trades = await db.trades.find({}, {"_id": 0}).to_list(10000)
-    total_volume = sum(trade.get('amount', 0) * trade.get('price', 0) for trade in trades)
+    # Calculate total volume using aggregation pipeline (optimized)
+    pipeline = [
+        {
+            "$group": {
+                "_id": None,
+                "total_volume": {
+                    "$sum": {"$multiply": ["$amount", "$price"]}
+                }
+            }
+        }
+    ]
+    
+    volume_result = await db.trades.aggregate(pipeline).to_list(1)
+    total_volume = volume_result[0]["total_volume"] if volume_result else 0
     
     return {
         "total_users": total_users,
