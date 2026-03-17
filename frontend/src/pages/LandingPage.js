@@ -203,6 +203,175 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* How Crypto Arbitrage Works - Visual Tutorial */}
+      <section className="container mx-auto px-6 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            How <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">Crypto Arbitrage</span> Works
+          </h2>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            Discover profit opportunities by exploiting price differences across multiple exchanges
+          </p>
+        </div>
+
+        {/* Visual Flow Diagram */}
+        <div className="relative max-w-6xl mx-auto">
+          {/* Connection Lines */}
+          <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-30 transform -translate-y-1/2"></div>
+          
+          <div className="grid md:grid-cols-4 gap-8 relative z-10">
+            {/* Step 1: Scan */}
+            <div className="text-center group">
+              <div className="bg-gradient-to-br from-blue-600 to-blue-800 w-32 h-32 rounded-2xl mx-auto mb-6 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-2xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 to-white/20"></div>
+                <div className="relative">
+                  <div className="text-5xl mb-2">🔍</div>
+                  <div className="text-2xl font-bold text-white">01</div>
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Scan Prices</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                Our system monitors <span className="text-blue-400 font-semibold">264 price points</span> across 11 exchanges in real-time
+              </p>
+              <div className="mt-4 flex justify-center space-x-2">
+                <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+              </div>
+            </div>
+
+            {/* Step 2: Detect */}
+            <div className="text-center group">
+              <div className="bg-gradient-to-br from-purple-600 to-purple-800 w-32 h-32 rounded-2xl mx-auto mb-6 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-2xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 to-white/20"></div>
+                <div className="relative">
+                  <div className="text-5xl mb-2">⚡</div>
+                  <div className="text-2xl font-bold text-white">02</div>
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Detect Opportunity</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                AI algorithm finds <span className="text-purple-400 font-semibold">price differences</span> between exchanges instantly
+              </p>
+              <div className="mt-4 space-y-1">
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-xs text-gray-500">Binance</span>
+                  <span className="text-green-400 font-bold">$45,200</span>
+                </div>
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-xs text-gray-500">Kraken</span>
+                  <span className="text-red-400 font-bold">$44,800</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 3: Execute */}
+            <div className="text-center group">
+              <div className="bg-gradient-to-br from-pink-600 to-pink-800 w-32 h-32 rounded-2xl mx-auto mb-6 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-2xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 to-white/20"></div>
+                <div className="relative">
+                  <div className="text-5xl mb-2">🔄</div>
+                  <div className="text-2xl font-bold text-white">03</div>
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Execute Trade</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                <span className="text-pink-400 font-semibold">Buy low</span> on one exchange, <span className="text-pink-400 font-semibold">sell high</span> on another simultaneously
+              </p>
+              <div className="mt-4 flex justify-center items-center space-x-2">
+                <div className="px-3 py-1 bg-green-500 bg-opacity-20 rounded-full text-green-400 text-xs font-bold">BUY</div>
+                <div>↔️</div>
+                <div className="px-3 py-1 bg-red-500 bg-opacity-20 rounded-full text-red-400 text-xs font-bold">SELL</div>
+              </div>
+            </div>
+
+            {/* Step 4: Profit */}
+            <div className="text-center group">
+              <div className="bg-gradient-to-br from-green-600 to-green-800 w-32 h-32 rounded-2xl mx-auto mb-6 flex items-center justify-center transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-2xl relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 to-white/20"></div>
+                <div className="relative">
+                  <div className="text-5xl mb-2">💰</div>
+                  <div className="text-2xl font-bold text-white">04</div>
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Earn Profit</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                Keep the <span className="text-green-400 font-semibold">profit difference</span> with zero market risk
+              </p>
+              <div className="mt-4">
+                <div className="text-3xl font-bold text-green-400">+0.88%</div>
+                <div className="text-xs text-gray-500 mt-1">Instant Profit</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Example Calculation Box */}
+        <div className="mt-16 max-w-4xl mx-auto">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border-2 border-blue-500/30 shadow-2xl">
+            <h3 className="text-2xl font-bold text-white mb-6 text-center">
+              💡 Real Example
+            </h3>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="text-center p-4 bg-gray-700 bg-opacity-50 rounded-xl">
+                <div className="text-sm text-gray-400 mb-2">Buy on Kraken</div>
+                <div className="text-3xl font-bold text-white mb-1">$44,800</div>
+                <div className="text-xs text-gray-500">1 BTC</div>
+              </div>
+
+              <div className="flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-4xl mb-2">→</div>
+                  <div className="text-sm text-purple-400 font-semibold">Arbitrage</div>
+                </div>
+              </div>
+
+              <div className="text-center p-4 bg-gray-700 bg-opacity-50 rounded-xl">
+                <div className="text-sm text-gray-400 mb-2">Sell on Binance</div>
+                <div className="text-3xl font-bold text-white mb-1">$45,200</div>
+                <div className="text-xs text-gray-500">1 BTC</div>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-gray-700">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400">Your Profit:</span>
+                <span className="text-3xl font-bold text-green-400">+$400</span>
+              </div>
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-gray-400 text-sm">Return:</span>
+                <span className="text-xl font-bold text-green-400">+0.88%</span>
+              </div>
+              <div className="mt-4 text-center text-xs text-gray-500">
+                * Example calculation. Actual profits vary based on market conditions and fees.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Why It Works */}
+        <div className="mt-16 grid md:grid-cols-3 gap-6">
+          <div className="text-center p-6 bg-gray-800 bg-opacity-50 rounded-xl backdrop-blur-sm">
+            <div className="text-4xl mb-4">🌐</div>
+            <h4 className="text-lg font-bold text-white mb-2">Market Inefficiency</h4>
+            <p className="text-sm text-gray-400">Prices differ across exchanges due to liquidity, demand, and timing</p>
+          </div>
+
+          <div className="text-center p-6 bg-gray-800 bg-opacity-50 rounded-xl backdrop-blur-sm">
+            <div className="text-4xl mb-4">⚡</div>
+            <h4 className="text-lg font-bold text-white mb-2">Speed Advantage</h4>
+            <p className="text-sm text-gray-400">Our system detects and acts on opportunities in milliseconds</p>
+          </div>
+
+          <div className="text-center p-6 bg-gray-800 bg-opacity-50 rounded-xl backdrop-blur-sm">
+            <div className="text-4xl mb-4">🛡️</div>
+            <h4 className="text-lg font-bold text-white mb-2">Zero Market Risk</h4>
+            <p className="text-sm text-gray-400">Simultaneous buy/sell eliminates exposure to price movements</p>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="container mx-auto px-6 py-20 text-center">
         <h2 className="text-4xl font-bold text-white mb-6">Ready to Start?</h2>
