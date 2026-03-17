@@ -425,18 +425,18 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
-# Include router
-app.include_router(api_router)
-
-# Import and include Stripe and Super Admin routers
+# Import Stripe and Super Admin routers BEFORE including api_router
 from stripe_routes import stripe_router
 from super_admin_routes import super_admin_router
 
-# Include Stripe payment routes
+# Include Stripe payment routes in api_router
 api_router.include_router(stripe_router)
 
-# Include Super Admin routes
+# Include Super Admin routes in api_router
 api_router.include_router(super_admin_router)
+
+# Include api_router in main app
+app.include_router(api_router)
 
 # CORS
 app.add_middleware(
