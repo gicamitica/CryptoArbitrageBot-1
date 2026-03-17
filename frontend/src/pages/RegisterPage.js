@@ -40,7 +40,7 @@ const RegisterPage = () => {
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="text-center mb-8">
-          <FaBitcoin className="text-6xl text-yellow-400 mx-auto mb-4" />
+          <img src="/arbitrajz-logo.jpg" alt="ArbitrajZ Logo" className="h-24 w-24 rounded-full mx-auto mb-4 shadow-lg shadow-cyan-500/50" />
           <h1 className="text-3xl font-bold text-white">Create Account</h1>
           <p className="text-gray-400 mt-2">Start your crypto arbitrage journey with ArbitrajZ</p>
         </div>

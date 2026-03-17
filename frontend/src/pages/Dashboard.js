@@ -54,8 +54,8 @@ const Dashboard = () => {
       <header className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b`}>
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-2">
-              <FaBitcoin className="text-3xl text-yellow-400" />
+            <div className="flex items-center space-x-3">
+              <img src="/arbitrajz-logo.jpg" alt="ArbitrajZ Logo" className="h-10 w-10 rounded-full" />
               <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>ArbitrajZ</span>
             </div>
             <nav className="hidden md:flex space-x-4">

@@ -58,7 +58,7 @@ const AdminPanel = () => {
             >
               <FaArrowLeft className={theme === 'dark' ? 'text-white' : 'text-gray-900'} />
             </button>
-            <FaBitcoin className="text-3xl text-yellow-400" />
+            <img src="/arbitrajz-logo.jpg" alt="ArbitrajZ Logo" className="h-10 w-10 rounded-full" />
             <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Admin Panel</span>
           </div>
         </div>

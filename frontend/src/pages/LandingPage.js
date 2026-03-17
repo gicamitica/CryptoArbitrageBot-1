@@ -9,8 +9,8 @@ const LandingPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
       {/* Header */}
       <header className="container mx-auto px-6 py-6 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <FaBitcoin className="text-4xl text-yellow-400" />
+        <div className="flex items-center space-x-3">
+          <img src="/arbitrajz-logo.jpg" alt="ArbitrajZ Logo" className="h-12 w-12 rounded-full" />
           <span className="text-2xl font-bold text-white">ArbitrajZ</span>
         </div>
         <div className="space-x-4">
