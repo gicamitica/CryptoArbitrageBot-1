@@ -115,7 +115,7 @@ const LandingPage = () => {
           ].map((coin, idx) => (
             <div
               key={coin.symbol}
-              className="bg-gradient-to-br from-gray-800 to-gray-900 p-4 rounded-xl text-center hover:transform hover:scale-110 transition-all cursor-pointer border border-gray-700 hover:border-blue-500"
+              className="bg-gray-800 bg-opacity-30 backdrop-blur-sm p-4 rounded-xl text-center hover:transform hover:scale-110 hover:bg-opacity-50 transition-all cursor-pointer border border-gray-700 border-opacity-30 hover:border-blue-400 hover:border-opacity-100 hover:shadow-lg hover:shadow-blue-500/20"
               style={{ animationDelay: `${idx * 0.05}s` }}
             >
               <div className="text-3xl mb-2">{coin.emoji}</div>
