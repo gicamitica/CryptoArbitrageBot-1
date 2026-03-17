@@ -207,11 +207,67 @@ const TradingPage = () => {
                 </div>
               </div>
             ) : (
-              <div className={`p-12 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg text-center`}>
-                <FaRobot className={`text-6xl mx-auto mb-4 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`} />
-                <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                  Select an opportunity to start trading
-                </p>
+              <div className={`relative p-12 rounded-xl ${theme === 'dark' ? 'bg-gradient-to-br from-gray-800 via-blue-900 to-purple-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50'} shadow-2xl overflow-hidden`}>
+                {/* Animated background elements */}
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className={`absolute -top-10 -left-10 w-40 h-40 rounded-full ${theme === 'dark' ? 'bg-blue-500' : 'bg-blue-300'} opacity-20 animate-pulse`}></div>
+                  <div className={`absolute -bottom-10 -right-10 w-60 h-60 rounded-full ${theme === 'dark' ? 'bg-purple-500' : 'bg-purple-300'} opacity-20 animate-pulse`} style={{animationDelay: '1s'}}></div>
+                  <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full ${theme === 'dark' ? 'bg-pink-500' : 'bg-pink-300'} opacity-10 animate-pulse`} style={{animationDelay: '0.5s'}}></div>
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10 text-center">
+                  {/* Crypto Icons Animation */}
+                  <div className="flex justify-center items-center space-x-4 mb-6">
+                    <div className="animate-bounce" style={{animationDelay: '0s'}}>
+                      <FaBitcoin className="text-5xl text-yellow-400 drop-shadow-lg" />
+                    </div>
+                    <div className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                      ⚡
+                    </div>
+                    <div className="animate-bounce" style={{animationDelay: '0.2s'}}>
+                      <div className="text-5xl">💎</div>
+                    </div>
+                  </div>
+
+                  {/* Title with gradient */}
+                  <h3 className={`text-3xl font-bold mb-4 bg-gradient-to-r ${theme === 'dark' ? 'from-blue-400 via-purple-400 to-pink-400' : 'from-blue-600 via-purple-600 to-pink-600'} bg-clip-text text-transparent`}>
+                    Ready to Trade?
+                  </h3>
+                  
+                  <p className={`text-lg mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    Select an arbitrage opportunity from the right panel
+                  </p>
+
+                  {/* Animated instruction cards */}
+                  <div className="grid grid-cols-3 gap-4 mt-8">
+                    <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-white bg-opacity-5' : 'bg-white bg-opacity-60'} backdrop-blur-sm transform transition-all hover:scale-105`}>
+                      <div className="text-3xl mb-2">👉</div>
+                      <div className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                        Pick Opportunity
+                      </div>
+                    </div>
+                    <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-white bg-opacity-5' : 'bg-white bg-opacity-60'} backdrop-blur-sm transform transition-all hover:scale-105`}>
+                      <div className="text-3xl mb-2">💰</div>
+                      <div className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                        Set Amount
+                      </div>
+                    </div>
+                    <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-white bg-opacity-5' : 'bg-white bg-opacity-60'} backdrop-blur-sm transform transition-all hover:scale-105`}>
+                      <div className="text-3xl mb-2">🚀</div>
+                      <div className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                        Execute Trade
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Profit indicator */}
+                  <div className={`mt-8 p-4 rounded-full inline-block ${theme === 'dark' ? 'bg-green-500 bg-opacity-20' : 'bg-green-100'}`}>
+                    <span className="text-green-400 font-bold text-lg">
+                      📈 Up to 4.5% Profit Available
+                    </span>
+                  </div>
+                </div>
               </div>
             )}
 
