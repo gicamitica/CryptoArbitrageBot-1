@@ -372,6 +372,326 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Interactive Tutorial Section */}
+      <section className="container mx-auto px-6 py-20 bg-gray-900 bg-opacity-50">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            🎓 <span className="bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">Step-by-Step</span> Setup Guide
+          </h2>
+          <p className="text-xl text-gray-400">Get started in 5 minutes - Connect your exchange and start profiting!</p>
+        </div>
+
+        {/* Video-Style Player */}
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl overflow-hidden shadow-2xl border-2 border-blue-500/30">
+            
+            {/* Video Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">▶️</span>
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-lg">How to Connect Your Exchange API</h3>
+                  <p className="text-blue-100 text-sm">Watch this quick tutorial to get started</p>
+                </div>
+              </div>
+              <div className="text-white text-sm font-mono">3:24</div>
+            </div>
+
+            {/* Tutorial Content */}
+            <div className="p-8">
+              
+              {/* Tab Navigation */}
+              <div className="flex space-x-4 mb-8 border-b border-gray-700">
+                <button className="px-6 py-3 text-white font-semibold border-b-2 border-blue-500 bg-blue-500 bg-opacity-10">
+                  1️⃣ Create API Key
+                </button>
+                <button className="px-6 py-3 text-gray-400 font-semibold hover:text-white transition-colors">
+                  2️⃣ Connect to ArbitrajZ
+                </button>
+                <button className="px-6 py-3 text-gray-400 font-semibold hover:text-white transition-colors">
+                  3️⃣ Start Trading
+                </button>
+              </div>
+
+              {/* Step-by-Step Content */}
+              <div className="space-y-6">
+                
+                {/* Step 1 */}
+                <div className="flex items-start space-x-4 p-4 bg-gray-700 bg-opacity-30 rounded-xl hover:bg-opacity-50 transition-all cursor-pointer group">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">
+                      1
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-white mb-2 flex items-center">
+                      Login to Binance.com
+                      <span className="ml-3 text-sm bg-blue-500 bg-opacity-20 text-blue-400 px-3 py-1 rounded-full">00:00 - 00:15</span>
+                    </h4>
+                    <p className="text-gray-400 mb-3">Go to <span className="text-blue-400 font-mono">binance.com</span> and log into your account</p>
+                    <div className="flex items-center space-x-2">
+                      <div className="px-3 py-1 bg-yellow-500 bg-opacity-20 rounded text-yellow-400 text-sm">🔗 binance.com</div>
+                      <div className="text-gray-500 text-sm">→ Click "Login" → Enter credentials</div>
+                    </div>
+                  </div>
+                  <div className="text-3xl opacity-0 group-hover:opacity-100 transition-opacity">🌐</div>
+                </div>
+
+                {/* Step 2 */}
+                <div className="flex items-start space-x-4 p-4 bg-gray-700 bg-opacity-30 rounded-xl hover:bg-opacity-50 transition-all cursor-pointer group">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">
+                      2
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-white mb-2 flex items-center">
+                      Navigate to API Management
+                      <span className="ml-3 text-sm bg-purple-500 bg-opacity-20 text-purple-400 px-3 py-1 rounded-full">00:16 - 00:35</span>
+                    </h4>
+                    <p className="text-gray-400 mb-3">Go to Profile → API Management → Create API</p>
+                    <div className="flex items-center space-x-2">
+                      <div className="text-gray-500 text-sm">Profile Icon → API Management → "Create API"</div>
+                    </div>
+                  </div>
+                  <div className="text-3xl opacity-0 group-hover:opacity-100 transition-opacity">⚙️</div>
+                </div>
+
+                {/* Step 3 */}
+                <div className="flex items-start space-x-4 p-4 bg-gray-700 bg-opacity-30 rounded-xl hover:bg-opacity-50 transition-all cursor-pointer group">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-pink-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">
+                      3
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-white mb-2 flex items-center">
+                      Name Your API Key
+                      <span className="ml-3 text-sm bg-pink-500 bg-opacity-20 text-pink-400 px-3 py-1 rounded-full">00:36 - 00:50</span>
+                    </h4>
+                    <p className="text-gray-400 mb-3">Enter a name like "ArbitrajZ Trading Bot"</p>
+                    <div className="p-3 bg-gray-800 rounded-lg border border-gray-600 font-mono text-sm text-gray-300">
+                      Label: <span className="text-blue-400">ArbitrajZ Trading Bot</span>
+                    </div>
+                  </div>
+                  <div className="text-3xl opacity-0 group-hover:opacity-100 transition-opacity">✏️</div>
+                </div>
+
+                {/* Step 4 - CRITICAL */}
+                <div className="flex items-start space-x-4 p-4 bg-red-900 bg-opacity-20 rounded-xl border-2 border-red-500/30 hover:border-red-500/50 transition-all cursor-pointer group">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform animate-pulse">
+                      4
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-white mb-2 flex items-center">
+                      🚨 Set Permissions Correctly (CRITICAL!)
+                      <span className="ml-3 text-sm bg-red-500 bg-opacity-30 text-red-400 px-3 py-1 rounded-full font-bold">00:51 - 01:30</span>
+                    </h4>
+                    <p className="text-gray-300 mb-4 font-semibold">This is the MOST IMPORTANT step for your security!</p>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="p-4 bg-green-500 bg-opacity-10 rounded-lg border border-green-500">
+                        <h5 className="text-green-400 font-bold mb-2 flex items-center">
+                          ✅ ENABLE These:
+                        </h5>
+                        <ul className="space-y-2 text-sm">
+                          <li className="flex items-center text-gray-300">
+                            <span className="text-green-400 mr-2">✓</span> Read Information
+                          </li>
+                          <li className="flex items-center text-gray-300">
+                            <span className="text-green-400 mr-2">✓</span> Enable Spot & Margin Trading
+                          </li>
+                        </ul>
+                      </div>
+                      
+                      <div className="p-4 bg-red-500 bg-opacity-10 rounded-lg border border-red-500">
+                        <h5 className="text-red-400 font-bold mb-2 flex items-center">
+                          ❌ DISABLE These:
+                        </h5>
+                        <ul className="space-y-2 text-sm">
+                          <li className="flex items-center text-gray-300">
+                            <span className="text-red-400 mr-2">✗</span> Enable Withdrawals (NEVER!)
+                          </li>
+                          <li className="flex items-center text-gray-300">
+                            <span className="text-red-400 mr-2">✗</span> Enable Internal Transfer
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-3 p-3 bg-yellow-500 bg-opacity-10 rounded-lg border border-yellow-500/30">
+                      <p className="text-yellow-400 text-sm font-semibold">
+                        ⚠️ With these settings, the API can ONLY read prices and execute trades. 
+                        It CANNOT withdraw your crypto!
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-3xl opacity-0 group-hover:opacity-100 transition-opacity">🛡️</div>
+                </div>
+
+                {/* Step 5 */}
+                <div className="flex items-start space-x-4 p-4 bg-gray-700 bg-opacity-30 rounded-xl hover:bg-opacity-50 transition-all cursor-pointer group">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">
+                      5
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-white mb-2 flex items-center">
+                      Copy Your API Key & Secret
+                      <span className="ml-3 text-sm bg-green-500 bg-opacity-20 text-green-400 px-3 py-1 rounded-full">01:31 - 02:00</span>
+                    </h4>
+                    <p className="text-gray-400 mb-3">Click "Create" and copy both your API Key and Secret Key</p>
+                    <div className="space-y-2">
+                      <div className="p-3 bg-gray-800 rounded-lg border border-gray-600">
+                        <div className="text-xs text-gray-500 mb-1">API Key:</div>
+                        <div className="font-mono text-sm text-gray-300 flex items-center justify-between">
+                          <span>xyz123abc456def789...</span>
+                          <span className="text-blue-400 cursor-pointer">📋 Copy</span>
+                        </div>
+                      </div>
+                      <div className="p-3 bg-gray-800 rounded-lg border border-gray-600">
+                        <div className="text-xs text-gray-500 mb-1">API Secret:</div>
+                        <div className="font-mono text-sm text-gray-300 flex items-center justify-between">
+                          <span>•••••••••••••••••••</span>
+                          <span className="text-blue-400 cursor-pointer">📋 Copy</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-yellow-400 text-sm mt-3">
+                      ⚠️ Keep your Secret Key safe! You can only see it once.
+                    </p>
+                  </div>
+                  <div className="text-3xl opacity-0 group-hover:opacity-100 transition-opacity">📋</div>
+                </div>
+
+                {/* Step 6 */}
+                <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-blue-900 to-purple-900 bg-opacity-30 rounded-xl border-2 border-blue-500/50 hover:border-blue-500 transition-all cursor-pointer group">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">
+                      6
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-white mb-2 flex items-center">
+                      Connect to ArbitrajZ 🚀
+                      <span className="ml-3 text-sm bg-blue-500 bg-opacity-30 text-blue-400 px-3 py-1 rounded-full">02:01 - 02:45</span>
+                    </h4>
+                    <p className="text-gray-400 mb-3">Go to ArbitrajZ → Settings → API Keys → Add Exchange</p>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-gray-400">1.</span>
+                        <span className="text-gray-300">Select "Binance" from dropdown</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-gray-400">2.</span>
+                        <span className="text-gray-300">Paste your API Key</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-gray-400">3.</span>
+                        <span className="text-gray-300">Paste your API Secret</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-gray-400">4.</span>
+                        <span className="text-gray-300">Click "Test Connection"</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-gray-400">5.</span>
+                        <span className="text-green-400 font-semibold">✓ Connected successfully!</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-3xl opacity-0 group-hover:opacity-100 transition-opacity">🔗</div>
+                </div>
+
+                {/* Step 7 - Final */}
+                <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-green-900 to-emerald-900 bg-opacity-30 rounded-xl border-2 border-green-500/50">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg animate-pulse">
+                      ✓
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-2xl font-bold text-white mb-2 flex items-center">
+                      🎉 You're Ready to Trade!
+                      <span className="ml-3 text-sm bg-green-500 bg-opacity-30 text-green-400 px-3 py-1 rounded-full">02:46 - 03:24</span>
+                    </h4>
+                    <p className="text-gray-300 mb-4">ArbitrajZ is now monitoring prices and will alert you of profitable opportunities!</p>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="text-center p-3 bg-green-500 bg-opacity-10 rounded-lg">
+                        <div className="text-2xl mb-1">✅</div>
+                        <div className="text-sm text-green-400 font-semibold">Connected</div>
+                      </div>
+                      <div className="text-center p-3 bg-blue-500 bg-opacity-10 rounded-lg">
+                        <div className="text-2xl mb-1">📊</div>
+                        <div className="text-sm text-blue-400 font-semibold">Monitoring</div>
+                      </div>
+                      <div className="text-center p-3 bg-purple-500 bg-opacity-10 rounded-lg">
+                        <div className="text-2xl mb-1">💰</div>
+                        <div className="text-sm text-purple-400 font-semibold">Ready!</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* Video Footer / Progress Bar */}
+            <div className="bg-gray-800 p-4 border-t border-gray-700">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-400 text-sm">Tutorial Progress</span>
+                <span className="text-gray-400 text-sm">7 / 7 Steps</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 h-2 rounded-full" style={{width: '100%'}}></div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* CTA Below Tutorial */}
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => navigate('/register')}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-bold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-2xl"
+            >
+              🚀 Start Your Free Account Now
+            </button>
+            <p className="text-gray-400 text-sm mt-3">No credit card required • Setup in 5 minutes</p>
+          </div>
+
+          {/* Additional Resources */}
+          <div className="mt-12 grid md:grid-cols-3 gap-6">
+            <div className="text-center p-6 bg-gray-800 bg-opacity-50 rounded-xl">
+              <div className="text-4xl mb-3">📹</div>
+              <h4 className="text-white font-bold mb-2">Video Tutorial</h4>
+              <p className="text-gray-400 text-sm mb-3">Watch the full video on YouTube</p>
+              <a href="#" className="text-blue-400 hover:text-blue-300 text-sm font-semibold">Coming Soon →</a>
+            </div>
+            
+            <div className="text-center p-6 bg-gray-800 bg-opacity-50 rounded-xl">
+              <div className="text-4xl mb-3">📚</div>
+              <h4 className="text-white font-bold mb-2">PDF Guide</h4>
+              <p className="text-gray-400 text-sm mb-3">Download step-by-step PDF</p>
+              <a href="#" className="text-blue-400 hover:text-blue-300 text-sm font-semibold">Download →</a>
+            </div>
+            
+            <div className="text-center p-6 bg-gray-800 bg-opacity-50 rounded-xl">
+              <div className="text-4xl mb-3">💬</div>
+              <h4 className="text-white font-bold mb-2">Need Help?</h4>
+              <p className="text-gray-400 text-sm mb-3">Chat with our support team</p>
+              <a href="#" className="text-blue-400 hover:text-blue-300 text-sm font-semibold">Get Support →</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="container mx-auto px-6 py-20 text-center">
         <h2 className="text-4xl font-bold text-white mb-6">Ready to Start?</h2>
