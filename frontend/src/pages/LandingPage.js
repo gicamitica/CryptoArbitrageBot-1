@@ -11,7 +11,7 @@ const LandingPage = () => {
       <header className="container mx-auto px-6 py-6 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <FaBitcoin className="text-4xl text-yellow-400" />
-          <span className="text-2xl font-bold text-white">CryptoArb</span>
+          <span className="text-2xl font-bold text-white">ArbitrajZ</span>
         </div>
         <div className="space-x-4">
           <button
@@ -217,7 +217,7 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="container mx-auto px-6 py-8 text-center text-gray-400 border-t border-gray-800">
-        <p>&copy; 2025 CryptoArb. All rights reserved.</p>
+        <p>&copy; 2025 ArbitrajZ. All rights reserved.</p>
       </footer>
     </div>
   );

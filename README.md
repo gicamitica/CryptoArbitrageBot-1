@@ -1,6 +1,6 @@
-# 🚀 CryptoArb - Crypto Arbitrage Trading Platform
+# 🚀 ArbitrajZ - Crypto Arbitrage Trading Platform
 
-Aplicație completă de **crypto arbitrage trading** construită cu FastAPI (backend) și React (frontend), inspirată din CryptoArbitrageBot. Detectează și execută oportunități de arbitraj între multiple exchange-uri crypto.
+Aplicație completă de **crypto arbitrage trading** construită cu FastAPI (backend) și React (frontend). Detectează și execută oportunități de arbitraj între multiple exchange-uri crypto.
 
 ## ✨ Funcționalități
 

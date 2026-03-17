@@ -56,7 +56,7 @@ const Dashboard = () => {
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
               <FaBitcoin className="text-3xl text-yellow-400" />
-              <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>CryptoArb</span>
+              <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>ArbitrajZ</span>
             </div>
             <nav className="hidden md:flex space-x-4">
               <button

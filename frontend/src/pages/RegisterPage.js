@@ -42,7 +42,7 @@ const RegisterPage = () => {
         <div className="text-center mb-8">
           <FaBitcoin className="text-6xl text-yellow-400 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-white">Create Account</h1>
-          <p className="text-gray-400 mt-2">Start your crypto arbitrage journey</p>
+          <p className="text-gray-400 mt-2">Start your crypto arbitrage journey with ArbitrajZ</p>
         </div>
 
         {/* Form */}
