@@ -3,6 +3,12 @@ from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 import os
 from datetime import datetime
+from motor.motor_asyncio import AsyncIOMotorClient
+
+# Get db connection
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+client = AsyncIOMotorClient(mongo_url)
+db = client[os.environ.get('DB_NAME', 'crypto_arbitrage_db')]
 
 # Router
 super_admin_router = APIRouter(prefix="/super-admin", tags=["super-admin"])
@@ -47,12 +53,9 @@ async def super_admin_login(credentials: SuperAdminLogin):
     raise HTTPException(status_code=403, detail="Invalid password")
 
 @super_admin_router.get("/dashboard")
-async def get_super_admin_dashboard(password: str, db=None):
+async def get_super_admin_dashboard(password: str):
     """Get super admin dashboard data"""
     await get_super_admin(password)
-    
-    if not db:
-        raise HTTPException(status_code=500, detail="Database not available")
     
     # Get all stats
     total_users = await db.users.count_documents({})
@@ -106,14 +109,10 @@ async def update_plan(
 async def update_user_by_super_admin(
     user_id: str,
     user_update: UserUpdate,
-    password: str,
-    db=None
+    password: str
 ):
     """Update any user (super admin only)"""
     await get_super_admin(password)
-    
-    if not db:
-        raise HTTPException(status_code=500, detail="Database not available")
     
     # Update user
     update_data = user_update.model_dump(exclude_none=True, exclude={"user_id"})
@@ -132,14 +131,10 @@ async def update_user_by_super_admin(
 @super_admin_router.delete("/users/{user_id}")
 async def delete_user_by_super_admin(
     user_id: str,
-    password: str,
-    db=None
+    password: str
 ):
     """Delete any user (super admin only)"""
     await get_super_admin(password)
-    
-    if not db:
-        raise HTTPException(status_code=500, detail="Database not available")
     
     result = await db.users.delete_one({"id": user_id})
     
@@ -149,12 +144,9 @@ async def delete_user_by_super_admin(
     return {"success": True, "message": f"User {user_id} deleted"}
 
 @super_admin_router.get("/payments")
-async def get_all_payments(password: str, db=None):
+async def get_all_payments(password: str):
     """Get all payment transactions"""
     await get_super_admin(password)
-    
-    if not db:
-        raise HTTPException(status_code=500, detail="Database not available")
     
     transactions = await db.payment_transactions.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
     
@@ -163,18 +155,16 @@ async def get_all_payments(password: str, db=None):
 @super_admin_router.put("/settings")
 async def update_platform_settings(
     password: str,
-    settings: Dict[str, Any],
-    db=None
+    settings: Dict[str, Any]
 ):
     """Update platform-wide settings"""
     await get_super_admin(password)
     
     # Store settings in database
-    if db:
-        await db.platform_settings.update_one(
-            {"_id": "main"},
-            {"$set": {**settings, "updated_at": datetime.now().isoformat()}},
-            upsert=True
-        )
+    await db.platform_settings.update_one(
+        {"_id": "main"},
+        {"$set": {**settings, "updated_at": datetime.now().isoformat()}},
+        upsert=True
+    )
     
     return {"success": True, "message": "Platform settings updated"}

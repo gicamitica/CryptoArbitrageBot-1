@@ -46,7 +46,9 @@ class User(BaseModel):
     is_admin: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     balance: float = 1000.0  # Mock trading balance
-    subscription_tier: str = "free"  # free, pro, premium
+    subscription_tier: str = "free"  # free, test, pro, premium
+    subscription_expires_at: Optional[str] = None
+    max_exchanges: int = 0  # Number of exchanges user can connect
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -427,26 +429,14 @@ async def health_check():
 app.include_router(api_router)
 
 # Import and include Stripe and Super Admin routers
-from stripe_routes import stripe_router, SUBSCRIPTION_PLANS
+from stripe_routes import stripe_router
 from super_admin_routes import super_admin_router
 
-# Include payment and super admin routers with db dependency
-@app.on_event("startup")
-async def setup_routers():
-    # Add db to stripe router
-    stripe_router.db = db
-    api_router.include_router(stripe_router)
-    
-    # Add db to super admin router  
-    super_admin_router.db = db
-    api_router.include_router(super_admin_router)
+# Include Stripe payment routes
+api_router.include_router(stripe_router)
 
-# Make db available to routes
-for route in stripe_router.routes:
-    route.endpoint.__globals__['db'] = db
-
-for route in super_admin_router.routes:
-    route.endpoint.__globals__['db'] = db
+# Include Super Admin routes
+api_router.include_router(super_admin_router)
 
 # CORS
 app.add_middleware(

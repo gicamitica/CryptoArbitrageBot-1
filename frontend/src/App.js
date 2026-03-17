@@ -7,6 +7,9 @@ import RegisterPage from './pages/RegisterPage';
 import Dashboard from './pages/Dashboard';
 import TradingPage from './pages/TradingPage';
 import AdminPanel from './pages/AdminPanel';
+import PricingPage from './pages/PricingPage';
+import PaymentSuccess from './pages/PaymentSuccess';
+import SuperAdminPage from './pages/SuperAdminPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
@@ -46,6 +49,9 @@ function AppContent() {
       <Route path="/" element={user ? <Navigate to="/dashboard" /> : <LandingPage />} />
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <LoginPage />} />
       <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <RegisterPage />} />
+      <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/payment-success" element={<PaymentSuccess />} />
+      <Route path="/super-admin" element={<SuperAdminPage />} />
       <Route
         path="/dashboard"
         element={

@@ -3,13 +3,22 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict
 from datetime import datetime, timezone, timedelta
 import uuid
+import jwt
+import os
 from emergentintegrations.payments.stripe.checkout import (
     StripeCheckout,
     CheckoutSessionResponse,
     CheckoutStatusResponse,
     CheckoutSessionRequest
 )
-import os
+
+# Import db from server
+from motor.motor_asyncio import AsyncIOMotorClient
+
+# Get db connection
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+client = AsyncIOMotorClient(mongo_url)
+db = client[os.environ.get('DB_NAME', 'crypto_arbitrage_db')]
 
 # Subscription Plans
 SUBSCRIPTION_PLANS = {
@@ -136,7 +145,7 @@ async def create_checkout_session(
     return session
 
 @stripe_router.get("/status/{session_id}", response_model=CheckoutStatusResponse)
-async def get_payment_status(session_id: str, db=None):
+async def get_payment_status(session_id: str):
     """Get payment status for a session"""
     
     stripe_api_key = os.environ.get('STRIPE_API_KEY')
@@ -147,7 +156,7 @@ async def get_payment_status(session_id: str, db=None):
     checkout_status: CheckoutStatusResponse = await stripe_checkout.get_checkout_status(session_id)
     
     # Update database if paid
-    if db and checkout_status.payment_status == "paid":
+    if checkout_status.payment_status == "paid":
         transaction = await db.payment_transactions.find_one({"session_id": session_id})
         
         if transaction and transaction.get("payment_status") != "paid":
@@ -185,7 +194,7 @@ async def get_payment_status(session_id: str, db=None):
     return checkout_status
 
 @stripe_router.post("/webhook/stripe")
-async def stripe_webhook(request: Request, db=None):
+async def stripe_webhook(request: Request):
     """Handle Stripe webhooks"""
     
     stripe_api_key = os.environ.get('STRIPE_API_KEY')
@@ -201,7 +210,7 @@ async def stripe_webhook(request: Request, db=None):
         webhook_response = await stripe_checkout.handle_webhook(body, signature)
         
         # Update database based on event
-        if webhook_response.payment_status == "paid" and db:
+        if webhook_response.payment_status == "paid":
             await db.payment_transactions.update_one(
                 {"session_id": webhook_response.session_id},
                 {"$set": {"payment_status": "paid"}}
