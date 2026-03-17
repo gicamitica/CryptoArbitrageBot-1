@@ -154,9 +154,25 @@ CRYPTO_SYMBOLS = [
     {"symbol": "XRP", "name": "Ripple", "base_price": 0.55},
     {"symbol": "DOT", "name": "Polkadot", "base_price": 7.2},
     {"symbol": "AVAX", "name": "Avalanche", "base_price": 38},
+    {"symbol": "MATIC", "name": "Polygon", "base_price": 0.85},
+    {"symbol": "UNI", "name": "Uniswap", "base_price": 12.5},
+    {"symbol": "LINK", "name": "Chainlink", "base_price": 15.8},
+    {"symbol": "LTC", "name": "Litecoin", "base_price": 85},
+    {"symbol": "ATOM", "name": "Cosmos", "base_price": 9.3},
+    {"symbol": "ALGO", "name": "Algorand", "base_price": 0.28},
+    {"symbol": "FTM", "name": "Fantom", "base_price": 0.42},
+    {"symbol": "SAND", "name": "The Sandbox", "base_price": 0.55},
+    {"symbol": "MANA", "name": "Decentraland", "base_price": 0.48},
+    {"symbol": "AAVE", "name": "Aave", "base_price": 95},
+    {"symbol": "DOGE", "name": "Dogecoin", "base_price": 0.085},
+    {"symbol": "SHIB", "name": "Shiba Inu", "base_price": 0.000012},
+    {"symbol": "APT", "name": "Aptos", "base_price": 8.5},
+    {"symbol": "OP", "name": "Optimism", "base_price": 2.1},
+    {"symbol": "ARB", "name": "Arbitrum", "base_price": 1.8},
+    {"symbol": "SUI", "name": "Sui", "base_price": 1.2},
 ]
 
-EXCHANGES = ["Binance", "Kraken", "Coinbase", "KuCoin", "Bitfinex"]
+EXCHANGES = ["Binance", "Kraken", "Coinbase", "KuCoin", "Bitfinex", "Bybit", "OKX", "Gate.io", "Huobi", "Gemini", "Crypto.com"]
 
 def generate_mock_price(base_price: float, exchange: str) -> float:
     """Generate realistic price variations between exchanges"""
@@ -195,9 +211,16 @@ def detect_arbitrage_opportunities(prices: List[CryptoPrice]) -> List[ArbitrageO
     
     # Find arbitrage opportunities
     for symbol, prices_list in symbol_prices.items():
+        if len(prices_list) < 2:  # Need at least 2 exchanges
+            continue
+            
         prices_list.sort(key=lambda x: x.price_usd)
         min_price = prices_list[0]
         max_price = prices_list[-1]
+        
+        # Skip if min price is 0 or too small (prevents division by zero)
+        if min_price.price_usd <= 0 or min_price.price_usd < 0.0000001:
+            continue
         
         profit_percentage = ((max_price.price_usd - min_price.price_usd) / min_price.price_usd) * 100
         
