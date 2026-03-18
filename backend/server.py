@@ -278,7 +278,7 @@ async def register(user_data: UserCreate):
     await db.users.insert_one(user_doc)
     
     # Send verification email
-    base_url = os.environ.get('FRONTEND_URL', 'https://exchange-verify-demo.preview.emergentagent.com')
+    base_url = os.environ.get('FRONTEND_URL', 'https://arbitrajz.com')
     email_sent = send_verification_email(user.email, user.username, verification_token, base_url)
     
     return {
@@ -354,7 +354,7 @@ async def resend_verification(email: str):
     )
     
     # Send verification email
-    base_url = os.environ.get('FRONTEND_URL', 'https://exchange-verify-demo.preview.emergentagent.com')
+    base_url = os.environ.get('FRONTEND_URL', 'https://arbitrajz.com')
     send_verification_email(email, user_doc["username"], verification_token, base_url)
     
     return {"success": True, "message": "Verification email sent! Please check your inbox."}

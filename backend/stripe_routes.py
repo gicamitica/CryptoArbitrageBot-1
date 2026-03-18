@@ -5,12 +5,7 @@ from datetime import datetime, timezone, timedelta
 import uuid
 import jwt
 import os
-from emergentintegrations.payments.stripe.checkout import (
-    StripeCheckout,
-    CheckoutSessionResponse,
-    CheckoutStatusResponse,
-    CheckoutSessionRequest
-)
+import stripe
 
 # Import db from server
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -19,6 +14,9 @@ from motor.motor_asyncio import AsyncIOMotorClient
 mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ.get('DB_NAME', 'crypto_arbitrage_db')]
+
+# Initialize Stripe
+stripe.api_key = os.environ.get('STRIPE_API_KEY')
 
 # Subscription Plans
 SUBSCRIPTION_PLANS = {
@@ -52,6 +50,15 @@ SUBSCRIPTION_PLANS = {
 class CheckoutRequest(BaseModel):
     plan_id: str  # test, pro, premium
     origin_url: str
+
+class CheckoutSessionResponse(BaseModel):
+    session_id: str
+    checkout_url: str
+
+class CheckoutStatusResponse(BaseModel):
+    session_id: str
+    payment_status: str
+    customer_email: Optional[str] = None
 
 class PaymentTransaction(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -95,13 +102,9 @@ async def create_checkout_session(
     
     plan = SUBSCRIPTION_PLANS[checkout_req.plan_id]
     
-    # Initialize Stripe
-    stripe_api_key = os.environ.get('STRIPE_API_KEY')
-    if not stripe_api_key:
+    # Check Stripe API key
+    if not stripe.api_key:
         raise HTTPException(status_code=500, detail="Stripe not configured")
-    
-    webhook_url = f"{checkout_req.origin_url}/api/webhook/stripe"
-    stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
     
     # Build URLs
     success_url = f"{checkout_req.origin_url}/payment-success?session_id={{CHECKOUT_SESSION_ID}}"
@@ -115,107 +118,164 @@ async def create_checkout_session(
         "email": current_user.get("email") if current_user else "guest"
     }
     
-    # Create checkout session
-    checkout_request = CheckoutSessionRequest(
-        amount=plan["price"],
-        currency=plan["currency"],
-        success_url=success_url,
-        cancel_url=cancel_url,
-        metadata=metadata
-    )
-    
-    session: CheckoutSessionResponse = await stripe_checkout.create_checkout_session(checkout_request)
-    
-    # Create payment transaction record
-    transaction = PaymentTransaction(
-        user_id=current_user.get("id") if current_user else None,
-        email=current_user.get("email") if current_user else None,
-        plan_id=checkout_req.plan_id,
-        amount=plan["price"],
-        currency=plan["currency"],
-        session_id=session.session_id,
-        payment_status="pending",
-        expires_at=datetime.now(timezone.utc) + timedelta(hours=24),
-        metadata=metadata
-    )
-    
-    # Save to database
-    await db.payment_transactions.insert_one(transaction.model_dump(mode='json'))
-    
-    return session
+    try:
+        # Create Stripe checkout session
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': plan["currency"],
+                    'product_data': {
+                        'name': plan["name"],
+                        'description': f"ArbitrajZ {plan['name']} - {plan['duration']}"
+                    },
+                    'unit_amount': int(plan["price"] * 100),  # Stripe uses cents
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url=success_url,
+            cancel_url=cancel_url,
+            metadata=metadata,
+            customer_email=current_user.get("email") if current_user else None
+        )
+        
+        # Create payment transaction record
+        transaction = PaymentTransaction(
+            user_id=current_user.get("id") if current_user else None,
+            email=current_user.get("email") if current_user else None,
+            plan_id=checkout_req.plan_id,
+            amount=plan["price"],
+            currency=plan["currency"],
+            session_id=session.id,
+            payment_status="pending",
+            expires_at=datetime.now(timezone.utc) + timedelta(hours=24),
+            metadata=metadata
+        )
+        
+        # Save to database
+        await db.payment_transactions.insert_one(transaction.model_dump(mode='json'))
+        
+        return CheckoutSessionResponse(
+            session_id=session.id,
+            checkout_url=session.url
+        )
+        
+    except stripe.error.StripeError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @stripe_router.get("/status/{session_id}", response_model=CheckoutStatusResponse)
 async def get_payment_status(session_id: str):
     """Get payment status for a session"""
     
-    stripe_api_key = os.environ.get('STRIPE_API_KEY')
-    webhook_url = f"{os.environ.get('BACKEND_URL', 'http://localhost:8001')}/api/webhook/stripe"
-    stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
-    
-    # Get status from Stripe
-    checkout_status: CheckoutStatusResponse = await stripe_checkout.get_checkout_status(session_id)
-    
-    # Update database if paid
-    if checkout_status.payment_status == "paid":
-        transaction = await db.payment_transactions.find_one({"session_id": session_id})
+    try:
+        # Get session from Stripe
+        session = stripe.checkout.Session.retrieve(session_id)
         
-        if transaction and transaction.get("payment_status") != "paid":
-            # Update transaction
-            await db.payment_transactions.update_one(
-                {"session_id": session_id},
-                {"$set": {"payment_status": "paid"}}
-            )
+        payment_status = "pending"
+        if session.payment_status == "paid":
+            payment_status = "paid"
+        elif session.status == "expired":
+            payment_status = "expired"
+        
+        # Update database if paid
+        if payment_status == "paid":
+            transaction = await db.payment_transactions.find_one({"session_id": session_id})
             
-            # Update user subscription if user exists
-            user_id = transaction.get("user_id")
-            plan_id = transaction.get("plan_id")
-            
-            if user_id and user_id != "guest":
-                plan = SUBSCRIPTION_PLANS.get(plan_id, {})
-                
-                # Calculate expiry
-                if plan_id == "test":
-                    expires_at = datetime.now(timezone.utc) + timedelta(days=1)
-                else:  # pro or premium
-                    expires_at = datetime.now(timezone.utc) + timedelta(days=30)
-                
-                # Update user
-                await db.users.update_one(
-                    {"id": user_id},
-                    {
-                        "$set": {
-                            "subscription_tier": plan_id,
-                            "subscription_expires_at": expires_at.isoformat(),
-                            "max_exchanges": plan.get("max_exchanges", 2)
-                        }
-                    }
+            if transaction and transaction.get("payment_status") != "paid":
+                # Update transaction
+                await db.payment_transactions.update_one(
+                    {"session_id": session_id},
+                    {"$set": {"payment_status": "paid"}}
                 )
-    
-    return checkout_status
+                
+                # Update user subscription if user exists
+                user_id = transaction.get("user_id")
+                plan_id = transaction.get("plan_id")
+                
+                if user_id and user_id != "guest":
+                    plan = SUBSCRIPTION_PLANS.get(plan_id, {})
+                    
+                    # Calculate expiry
+                    if plan_id == "test":
+                        expires_at = datetime.now(timezone.utc) + timedelta(days=1)
+                    else:  # pro or premium
+                        expires_at = datetime.now(timezone.utc) + timedelta(days=30)
+                    
+                    # Update user
+                    await db.users.update_one(
+                        {"id": user_id},
+                        {
+                            "$set": {
+                                "subscription_tier": plan_id,
+                                "subscription_expires_at": expires_at.isoformat(),
+                                "max_exchanges": plan.get("max_exchanges", 2)
+                            }
+                        }
+                    )
+        
+        return CheckoutStatusResponse(
+            session_id=session_id,
+            payment_status=payment_status,
+            customer_email=session.customer_email
+        )
+        
+    except stripe.error.StripeError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @stripe_router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
     """Handle Stripe webhooks"""
     
-    stripe_api_key = os.environ.get('STRIPE_API_KEY')
-    webhook_url = f"{os.environ.get('BACKEND_URL', 'http://localhost:8001')}/api/webhook/stripe"
-    stripe_checkout = StripeCheckout(api_key=stripe_api_key, webhook_url=webhook_url)
-    
     # Get webhook body and signature
     body = await request.body()
     signature = request.headers.get("Stripe-Signature")
+    webhook_secret = os.environ.get('STRIPE_WEBHOOK_SECRET')
     
     try:
-        # Handle webhook
-        webhook_response = await stripe_checkout.handle_webhook(body, signature)
+        if webhook_secret:
+            event = stripe.Webhook.construct_event(body, signature, webhook_secret)
+        else:
+            # Without webhook secret, just parse the event
+            import json
+            event = stripe.Event.construct_from(json.loads(body), stripe.api_key)
         
-        # Update database based on event
-        if webhook_response.payment_status == "paid":
-            await db.payment_transactions.update_one(
-                {"session_id": webhook_response.session_id},
-                {"$set": {"payment_status": "paid"}}
-            )
+        # Handle checkout.session.completed event
+        if event.type == 'checkout.session.completed':
+            session = event.data.object
+            
+            if session.payment_status == "paid":
+                await db.payment_transactions.update_one(
+                    {"session_id": session.id},
+                    {"$set": {"payment_status": "paid"}}
+                )
+                
+                # Get transaction and update user
+                transaction = await db.payment_transactions.find_one({"session_id": session.id})
+                if transaction:
+                    user_id = transaction.get("user_id")
+                    plan_id = transaction.get("plan_id")
+                    
+                    if user_id and user_id != "guest":
+                        plan = SUBSCRIPTION_PLANS.get(plan_id, {})
+                        
+                        if plan_id == "test":
+                            expires_at = datetime.now(timezone.utc) + timedelta(days=1)
+                        else:
+                            expires_at = datetime.now(timezone.utc) + timedelta(days=30)
+                        
+                        await db.users.update_one(
+                            {"id": user_id},
+                            {
+                                "$set": {
+                                    "subscription_tier": plan_id,
+                                    "subscription_expires_at": expires_at.isoformat(),
+                                    "max_exchanges": plan.get("max_exchanges", 2)
+                                }
+                            }
+                        )
         
         return {"status": "success"}
+        
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
