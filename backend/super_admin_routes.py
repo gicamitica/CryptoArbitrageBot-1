@@ -1,9 +1,14 @@
 from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional, List, Dict, Any
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorClient
+from passlib.context import CryptContext
+import uuid
+
+# Password hashing
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Get db connection
 mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
@@ -34,6 +39,12 @@ class UserUpdate(BaseModel):
     is_admin: Optional[bool] = None
     balance: Optional[float] = None
 
+class UserCreate(BaseModel):
+    email: EmailStr
+    username: str
+    password: str
+    subscription_tier: Optional[str] = "free"
+
 # Super Admin Authentication
 def verify_super_admin_password(password: str) -> bool:
     correct_password = os.environ.get('SUPER_ADMIN_PASSWORD', 'ArbitrajZ_SuperAdmin_2025_Secure!')
@@ -51,6 +62,49 @@ async def super_admin_login(credentials: SuperAdminLogin):
     if verify_super_admin_password(credentials.password):
         return SuperAdminToken(access=True, message="Super admin access granted")
     raise HTTPException(status_code=403, detail="Invalid password")
+
+@super_admin_router.post("/users")
+async def create_user_by_super_admin(user_data: UserCreate, password: str):
+    """Create a new user (super admin only)"""
+    await get_super_admin(password)
+    
+    # Check if email already exists
+    existing = await db.users.find_one({"email": user_data.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Check if username already exists
+    existing_username = await db.users.find_one({"username": user_data.username})
+    if existing_username:
+        raise HTTPException(status_code=400, detail="Username already taken")
+    
+    # Determine max_exchanges based on plan
+    max_exchanges_map = {
+        "free": 0,
+        "test": 2,
+        "pro": 5,
+        "premium": 999
+    }
+    
+    # Create user document
+    user_doc = {
+        "id": str(uuid.uuid4()),
+        "email": user_data.email,
+        "username": user_data.username,
+        "password": pwd_context.hash(user_data.password),
+        "full_name": None,
+        "is_active": True,
+        "is_admin": False,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "balance": 1000.0,
+        "subscription_tier": user_data.subscription_tier,
+        "subscription_expires_at": None,
+        "max_exchanges": max_exchanges_map.get(user_data.subscription_tier, 0)
+    }
+    
+    await db.users.insert_one(user_doc)
+    
+    return {"success": True, "message": f"User {user_data.email} created successfully", "user_id": user_doc["id"]}
 
 @super_admin_router.get("/dashboard")
 async def get_super_admin_dashboard(password: str):
