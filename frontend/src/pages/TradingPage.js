@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import axios from 'axios';
 import { FaBitcoin, FaArrowLeft, FaRobot } from 'react-icons/fa';
+import UpgradePrompt from '../components/UpgradePrompt';
 
 const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -19,11 +20,17 @@ const TradingPage = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
+  // Check if user has access to trading
+  const userPlan = user?.subscription_tier || 'free';
+  const hasAccess = userPlan !== 'free';
+
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    if (hasAccess) {
+      fetchData();
+      const interval = setInterval(fetchData, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [hasAccess]);
 
   const fetchData = async () => {
     try {
@@ -93,6 +100,34 @@ const TradingPage = () => {
     const units = tradeAmount / selectedOpp.buy_price;
     return units * (selectedOpp.sell_price - selectedOpp.buy_price);
   };
+
+  // Show upgrade prompt for free users
+  if (!hasAccess) {
+    return (
+      <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`}>
+        {/* Header */}
+        <header className={`${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-b`}>
+          <div className="container mx-auto px-6 py-4 flex items-center space-x-4">
+            <button
+              onClick={() => navigate('/dashboard')}
+              className={`p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}
+            >
+              <FaArrowLeft className={theme === 'dark' ? 'text-white' : 'text-gray-900'} />
+            </button>
+            <img src="/arbitrajz-logo.jpg" alt="ArbitrajZ Logo" className="h-10 w-10 rounded-full" />
+            <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Trading</span>
+          </div>
+        </header>
+        
+        <UpgradePrompt 
+          feature="Trading"
+          requiredPlan="Test, Pro, or Premium"
+          currentPlan={userPlan}
+          theme={theme}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`}>

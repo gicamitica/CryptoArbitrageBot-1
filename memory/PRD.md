@@ -40,21 +40,21 @@
 - [x] Super Admin routes (login, dashboard, user management)
 - [x] Super Admin: Create/Edit/Delete user endpoints
 - [x] API Keys Management (encrypted storage)
-- [x] **Live Exchange Integration:**
-  - [x] `/api/crypto/prices/live` - Real prices from user's exchanges
-  - [x] `/api/crypto/arbitrage/live` - Real arbitrage opportunities
-  - [x] ccxt library integration for 11 exchanges
-  - [x] Automatic fallback to mock data when no keys
+- [x] Live Exchange Integration (ccxt)
+- [x] **Feature Gating:**
+  - [x] `/api/user/features` - Returns user's feature access
+  - [x] Trading blocked for free users (403 error)
+  - [x] API keys blocked for free users
 - [x] Payment transaction tracking in MongoDB
 
 ### Frontend (React)
 - [x] Landing Page with animated tutorials
 - [x] Login/Register pages
-- [x] **Dashboard with LIVE/DEMO indicator:**
-  - [x] Yellow banner for demo data
-  - [x] Green banner for live data
-  - [x] "Connect Exchanges" quick link
-- [x] Trading Page
+- [x] Dashboard with LIVE/DEMO indicator
+- [x] **Trading Page with Feature Gating:**
+  - [x] UpgradePrompt component for free users
+  - [x] Shows plan comparison
+  - [x] Full trading interface for paid users
 - [x] Pricing Page with 3 plans
 - [x] PaymentSuccess page with status polling
 - [x] Super Admin Panel with full user management
@@ -97,10 +97,11 @@
 ### P0 - Critical
 - [x] ~~API Key Management Page~~ ✅ DONE
 - [x] ~~Real Exchange Integration~~ ✅ DONE
+- [x] ~~Feature Gating~~ ✅ DONE
 
 ### P1 - High Priority  
-- [ ] Feature gating by subscription tier (restrict features for free users)
 - [ ] Improve live data fetching performance (caching)
+- [ ] Trading page enhancements
 
 ### P2 - Medium Priority
 - [ ] Auto-trading bot for Premium users
@@ -132,4 +133,4 @@ All crypto prices and arbitrage opportunities are **SIMULATED**. No real exchang
 
 ## Last Updated
 **Date:** March 18, 2026  
-**Session:** Live Exchange Integration implemented - Dashboard shows LIVE/DEMO indicator with real-time data from connected exchanges
+**Session:** Feature Gating implemented - Free users see upgrade prompt on Trading page, paid users have full access

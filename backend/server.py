@@ -469,11 +469,83 @@ async def get_symbols():
     """Get list of supported crypto symbols"""
     return CRYPTO_SYMBOLS
 
+@api_router.get("/user/features")
+async def get_user_features(current_user: User = Depends(get_current_user)):
+    """Get user's feature access based on subscription"""
+    
+    subscription_tier = current_user.subscription_tier or "free"
+    max_exchanges = current_user.max_exchanges or 0
+    
+    # Define feature access by plan
+    features = {
+        "free": {
+            "dashboard": True,
+            "live_data": False,
+            "trading": False,
+            "api_keys": False,
+            "max_exchanges": 0,
+            "email_alerts": False,
+            "whatsapp_alerts": False,
+            "auto_trading": False,
+            "priority_support": False
+        },
+        "test": {
+            "dashboard": True,
+            "live_data": True,
+            "trading": True,
+            "api_keys": True,
+            "max_exchanges": 2,
+            "email_alerts": False,
+            "whatsapp_alerts": False,
+            "auto_trading": False,
+            "priority_support": False
+        },
+        "pro": {
+            "dashboard": True,
+            "live_data": True,
+            "trading": True,
+            "api_keys": True,
+            "max_exchanges": 5,
+            "email_alerts": True,
+            "whatsapp_alerts": False,
+            "auto_trading": False,
+            "priority_support": True
+        },
+        "premium": {
+            "dashboard": True,
+            "live_data": True,
+            "trading": True,
+            "api_keys": True,
+            "max_exchanges": 999,
+            "email_alerts": True,
+            "whatsapp_alerts": True,
+            "auto_trading": True,
+            "priority_support": True
+        }
+    }
+    
+    user_features = features.get(subscription_tier, features["free"])
+    
+    return {
+        "subscription_tier": subscription_tier,
+        "features": user_features,
+        "subscription_expires_at": current_user.subscription_expires_at
+    }
+
 # ==================== TRADING ROUTES ====================
 
 @api_router.post("/trades", response_model=Trade)
 async def create_trade(trade_data: TradeCreate, current_user: User = Depends(get_current_user)):
-    """Execute a trade (mock)"""
+    """Execute a trade (mock) - requires paid subscription"""
+    
+    # Check subscription
+    subscription_tier = current_user.subscription_tier or "free"
+    if subscription_tier == "free":
+        raise HTTPException(
+            status_code=403, 
+            detail="Trading requires a paid subscription. Please upgrade to Test, Pro, or Premium plan."
+        )
+    
     trade = Trade(
         user_id=current_user.id,
         symbol=trade_data.symbol,
