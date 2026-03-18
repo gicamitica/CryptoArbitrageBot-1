@@ -428,12 +428,16 @@ async def health_check():
 # Import Stripe and Super Admin routers BEFORE including api_router
 from stripe_routes import stripe_router
 from super_admin_routes import super_admin_router
+from api_keys_routes import api_keys_router
 
 # Include Stripe payment routes in api_router
 api_router.include_router(stripe_router)
 
 # Include Super Admin routes in api_router
 api_router.include_router(super_admin_router)
+
+# Include API Keys routes in api_router
+api_router.include_router(api_keys_router)
 
 # Include api_router in main app
 app.include_router(api_router)

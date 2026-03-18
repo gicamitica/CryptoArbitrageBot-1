@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import axios from 'axios';
-import { FaBitcoin, FaSignOutAlt, FaMoon, FaSun, FaChartLine, FaRobot, FaUserShield } from 'react-icons/fa';
+import { FaBitcoin, FaSignOutAlt, FaMoon, FaSun, FaChartLine, FaRobot, FaUserShield, FaCog } from 'react-icons/fa';
 
 const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -70,6 +70,13 @@ const Dashboard = () => {
                 className={`px-4 py-2 ${theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'}`}
               >
                 Trading
+              </button>
+              <button
+                onClick={() => navigate('/settings')}
+                className={`px-4 py-2 ${theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} flex items-center space-x-1`}
+              >
+                <FaCog />
+                <span>API Keys</span>
               </button>
               {user?.is_admin && (
                 <button
