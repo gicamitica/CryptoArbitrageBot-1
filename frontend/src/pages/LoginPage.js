@@ -93,13 +93,6 @@ const LoginPage = () => {
               </Link>
             </p>
           </div>
-
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-blue-500 bg-opacity-10 border border-blue-500 rounded-lg">
-            <p className="text-sm text-blue-300 font-semibold mb-2">Demo Admin Account:</p>
-            <p className="text-xs text-gray-400">Email: admin@cryptoarbitrage.com</p>
-            <p className="text-xs text-gray-400">Password: admin123</p>
-          </div>
         </div>
 
         <div className="mt-6 text-center">

@@ -13,7 +13,19 @@ const LandingPage = () => {
           <img src="/arbitrajz-logo.jpg" alt="ArbitrajZ Logo" className="h-12 w-12 rounded-full" />
           <span className="text-2xl font-bold text-white">ArbitrajZ</span>
         </div>
-        <div className="space-x-4">
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => navigate('/guide')}
+            className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+          >
+            Guide
+          </button>
+          <button
+            onClick={() => navigate('/pricing')}
+            className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+          >
+            Pricing
+          </button>
           <button
             onClick={() => navigate('/login')}
             className="px-6 py-2 text-white hover:text-blue-400 transition-colors"
