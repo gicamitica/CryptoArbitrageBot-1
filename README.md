@@ -174,7 +174,7 @@ Pentru a integra API-uri reale:
 
 ## 🌐 Preview URL
 
-**Live Application:** https://terminal-preview.preview.emergentagent.com
+**Live Application:** https://stripe-subscribe-2.preview.emergentagent.com
 
 **Pages:**
 - `/` - Landing page
