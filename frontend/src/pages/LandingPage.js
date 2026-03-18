@@ -679,7 +679,13 @@ const LandingPage = () => {
               <div className="text-4xl mb-3">📚</div>
               <h4 className="text-white font-bold mb-2">PDF Guide</h4>
               <p className="text-gray-400 text-sm mb-3">Download step-by-step PDF</p>
-              <a href="#" className="text-blue-400 hover:text-blue-300 text-sm font-semibold">Download →</a>
+              <a 
+                href="/ArbitrajZ_User_Guide.pdf" 
+                download="ArbitrajZ_User_Guide.pdf"
+                className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold transition-colors"
+              >
+                Download PDF →
+              </a>
             </div>
             
             <div className="text-center p-6 bg-gray-800 bg-opacity-50 rounded-xl">
