@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
-import { FaArrowLeft, FaArrowRight, FaCheckCircle, FaLock, FaRobot, FaChartLine, FaCog, FaPlay } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaCheckCircle, FaLock, FaRobot, FaCog, FaPlay } from 'react-icons/fa';
 
 const GuidePage = () => {
   const { theme } = useTheme();
@@ -10,24 +10,24 @@ const GuidePage = () => {
 
   const steps = [
     {
-      title: "Bine ai venit la ArbitrajZ!",
-      subtitle: "Ghid complet pentru a începe să faci profit din arbitraj crypto",
+      title: "Welcome to ArbitrajZ!",
+      subtitle: "Complete guide to start profiting from crypto arbitrage",
       content: (
         <div className="text-center">
           <div className="text-8xl mb-6">🚀</div>
           <p className={`text-lg mb-6 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-            ArbitrajZ te ajută să profiți de diferențele de preț între exchange-uri.
-            <br />Urmează acest ghid pentru a configura totul în <strong>5 minute</strong>.
+            ArbitrajZ helps you profit from price differences between exchanges.
+            <br />Follow this guide to set everything up in <strong>5 minutes</strong>.
           </p>
           <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${theme === 'dark' ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'}`}>
-            <FaCheckCircle /> Nu ai nevoie de experiență anterioară
+            <FaCheckCircle /> No prior experience needed
           </div>
         </div>
       )
     },
     {
-      title: "Pasul 1: Creează-ți contul",
-      subtitle: "Înregistrare rapidă în 30 secunde",
+      title: "Step 1: Create Your Account",
+      subtitle: "Quick registration in 30 seconds",
       content: (
         <div>
           <div className={`p-6 rounded-xl mb-6 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
@@ -35,10 +35,10 @@ const GuidePage = () => {
               <div className="text-4xl">1️⃣</div>
               <div>
                 <h4 className={`font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  Click pe "Get Started" sau "Register"
+                  Click "Get Started" or "Register"
                 </h4>
                 <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                  Găsești butonul pe pagina principală, în colțul dreapta sus.
+                  Find the button on the main page, top right corner.
                 </p>
               </div>
             </div>
@@ -49,12 +49,12 @@ const GuidePage = () => {
               <div className="text-4xl">2️⃣</div>
               <div>
                 <h4 className={`font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  Completează datele
+                  Fill in your details
                 </h4>
                 <ul className={`list-disc list-inside ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  <li><strong>Email</strong> - pentru notificări</li>
-                  <li><strong>Username</strong> - numele tău în platformă</li>
-                  <li><strong>Parolă</strong> - minim 6 caractere</li>
+                  <li><strong>Email</strong> - for notifications</li>
+                  <li><strong>Username</strong> - your platform name</li>
+                  <li><strong>Password</strong> - minimum 6 characters</li>
                 </ul>
               </div>
             </div>
@@ -65,10 +65,10 @@ const GuidePage = () => {
               <div className="text-4xl">3️⃣</div>
               <div>
                 <h4 className={`font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                  Gata! Ești logat automat
+                  Done! You're logged in automatically
                 </h4>
                 <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                  După înregistrare vei fi redirecționat la Dashboard.
+                  After registration you'll be redirected to the Dashboard.
                 </p>
               </div>
             </div>
@@ -77,8 +77,8 @@ const GuidePage = () => {
       )
     },
     {
-      title: "Pasul 2: Alege un plan",
-      subtitle: "3 opțiuni pentru orice buget",
+      title: "Step 2: Choose Your Plan",
+      subtitle: "3 options for every budget",
       content: (
         <div>
           <div className="grid md:grid-cols-3 gap-4 mb-6">
@@ -87,11 +87,11 @@ const GuidePage = () => {
               <div className="text-center">
                 <span className="text-3xl">🧪</span>
                 <h4 className={`font-bold mt-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Test</h4>
-                <p className="text-2xl font-bold text-blue-400">$1<span className="text-sm">/zi</span></p>
+                <p className="text-2xl font-bold text-blue-400">$1<span className="text-sm">/day</span></p>
                 <ul className={`text-sm mt-3 space-y-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  <li>✓ 2 exchange-uri</li>
-                  <li>✓ Trading manual</li>
-                  <li>✓ Date live</li>
+                  <li>✓ 2 exchanges</li>
+                  <li>✓ Manual trading</li>
+                  <li>✓ Live data</li>
                 </ul>
               </div>
             </div>
@@ -104,9 +104,9 @@ const GuidePage = () => {
               <div className="text-center">
                 <span className="text-3xl">⭐</span>
                 <h4 className={`font-bold mt-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Pro</h4>
-                <p className="text-2xl font-bold text-purple-400">$29<span className="text-sm">/lună</span></p>
+                <p className="text-2xl font-bold text-purple-400">$29<span className="text-sm">/month</span></p>
                 <ul className={`text-sm mt-3 space-y-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                  <li>✓ 5 exchange-uri</li>
+                  <li>✓ 5 exchanges</li>
                   <li>✓ Email alerts</li>
                   <li>✓ Priority support</li>
                 </ul>
@@ -118,7 +118,7 @@ const GuidePage = () => {
               <div className="text-center">
                 <span className="text-3xl">👑</span>
                 <h4 className={`font-bold mt-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Premium</h4>
-                <p className="text-2xl font-bold text-yellow-400">$99<span className="text-sm">/lună</span></p>
+                <p className="text-2xl font-bold text-yellow-400">$99<span className="text-sm">/month</span></p>
                 <ul className={`text-sm mt-3 space-y-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
                   <li>✓ Unlimited exchanges</li>
                   <li>✓ Auto-Trading Bot 🤖</li>
@@ -131,41 +131,41 @@ const GuidePage = () => {
           <div className={`p-4 rounded-xl flex items-center gap-3 ${theme === 'dark' ? 'bg-blue-900 bg-opacity-30' : 'bg-blue-50'}`}>
             <span className="text-2xl">💡</span>
             <p className={theme === 'dark' ? 'text-blue-300' : 'text-blue-700'}>
-              <strong>Recomandare:</strong> Începe cu planul <strong>Test ($1)</strong> pentru a testa platforma.
+              <strong>Tip:</strong> Start with the <strong>Test plan ($1)</strong> to try the platform.
             </p>
           </div>
         </div>
       )
     },
     {
-      title: "Pasul 3: Conectează Exchange-urile",
-      subtitle: "Aceasta este partea cea mai importantă!",
+      title: "Step 3: Connect Your Exchanges",
+      subtitle: "This is the most important part!",
       content: (
         <div>
           <div className={`p-4 rounded-xl mb-6 flex items-start gap-3 ${theme === 'dark' ? 'bg-red-900 bg-opacity-30 border border-red-500' : 'bg-red-50 border border-red-300'}`}>
             <FaLock className="text-red-400 text-xl mt-1" />
             <div>
-              <h4 className={`font-bold ${theme === 'dark' ? 'text-red-300' : 'text-red-700'}`}>🔒 SECURITATE MAXIMĂ</h4>
+              <h4 className={`font-bold ${theme === 'dark' ? 'text-red-300' : 'text-red-700'}`}>🔒 MAXIMUM SECURITY</h4>
               <p className={theme === 'dark' ? 'text-red-200' : 'text-red-600'}>
-                Creează chei API cu permisiuni <strong>READ-ONLY</strong> și <strong>FĂRĂ WITHDRAWALS</strong>!
-                Astfel, chiar dacă cineva obține cheile, NU poate retrage fonduri.
+                Create API keys with <strong>READ-ONLY</strong> permissions and <strong>NO WITHDRAWALS</strong>!
+                This way, even if someone gets your keys, they CANNOT withdraw funds.
               </p>
             </div>
           </div>
           
           <h4 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-            Cum obții chei API (exemplu Binance):
+            How to get API keys (Binance example):
           </h4>
           
           <div className="space-y-3">
             {[
-              "Loghează-te în contul Binance",
-              "Mergi la Account → API Management",
-              "Click 'Create API' și numește-o 'ArbitrajZ'",
-              "Activează DOAR 'Read' și 'Spot Trading'",
-              "DEZACTIVEAZĂ 'Enable Withdrawals' ❌",
-              "Copiază API Key și Secret",
-              "Lipeste-le în Settings → API Keys pe ArbitrajZ"
+              "Log in to your Binance account",
+              "Go to Account → API Management",
+              "Click 'Create API' and name it 'ArbitrajZ'",
+              "Enable ONLY 'Read' and 'Spot Trading'",
+              "DISABLE 'Enable Withdrawals' ❌",
+              "Copy API Key and Secret",
+              "Paste them in Settings → API Keys on ArbitrajZ"
             ].map((step, i) => (
               <div key={i} className={`flex items-center gap-3 p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
                 <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
@@ -181,8 +181,8 @@ const GuidePage = () => {
       )
     },
     {
-      title: "Pasul 4: Dashboard - Centrul de Comandă",
-      subtitle: "Aici vezi totul în timp real",
+      title: "Step 4: Dashboard - Command Center",
+      subtitle: "See everything in real-time",
       content: (
         <div>
           <div className={`p-6 rounded-xl mb-6 ${theme === 'dark' ? 'bg-gradient-to-r from-gray-700 to-gray-800' : 'bg-gradient-to-r from-gray-100 to-gray-200'}`}>
@@ -201,7 +201,7 @@ const GuidePage = () => {
               </div>
             </div>
             <p className={`text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-              ↑ Așa arată Dashboard-ul tău
+              ↑ This is how your Dashboard looks
             </p>
           </div>
           
@@ -211,7 +211,7 @@ const GuidePage = () => {
                 <span className="text-yellow-400">🟡</span> DEMO DATA
               </h4>
               <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Banner galben = date simulate. Conectează exchange-uri pentru date reale.
+                Yellow banner = simulated data. Connect exchanges for real prices.
               </p>
             </div>
             <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
@@ -219,7 +219,7 @@ const GuidePage = () => {
                 <span className="text-green-400">🟢</span> LIVE DATA
               </h4>
               <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Banner verde = prețuri reale din exchange-urile tale conectate!
+                Green banner = real prices from your connected exchanges!
               </p>
             </div>
           </div>
@@ -227,23 +227,23 @@ const GuidePage = () => {
       )
     },
     {
-      title: "Pasul 5: Execută Trade-uri",
-      subtitle: "Fă bani din diferențele de preț",
+      title: "Step 5: Execute Trades",
+      subtitle: "Make money from price differences",
       content: (
         <div>
           <div className={`p-6 rounded-xl mb-6 ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
             <h4 className={`font-bold mb-4 text-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              Exemplu de oportunitate:
+              Example opportunity:
             </h4>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <div className={`p-4 rounded-lg text-center ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
-                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Cumpără pe</p>
+                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Buy on</p>
                 <p className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Binance</p>
                 <p className="text-xl text-red-400">$67,000</p>
               </div>
               <FaArrowRight className="text-2xl text-purple-400" />
               <div className={`p-4 rounded-lg text-center ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
-                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Vinde pe</p>
+                <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Sell on</p>
                 <p className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Kraken</p>
                 <p className="text-xl text-green-400">$67,500</p>
               </div>
@@ -259,19 +259,19 @@ const GuidePage = () => {
             <div className={`flex items-center gap-3 p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
               <span className="text-2xl">👆</span>
               <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
-                Click pe oportunitate din Dashboard
+                Click on an opportunity from Dashboard
               </span>
             </div>
             <div className={`flex items-center gap-3 p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
               <span className="text-2xl">💰</span>
               <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
-                Introdu suma pe care vrei să o tranzacționezi
+                Enter the amount you want to trade
               </span>
             </div>
             <div className={`flex items-center gap-3 p-3 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
               <span className="text-2xl">✅</span>
               <span className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
-                Apasă "Execute Trade" și gata!
+                Click "Execute Trade" and done!
               </span>
             </div>
           </div>
@@ -279,44 +279,44 @@ const GuidePage = () => {
       )
     },
     {
-      title: "Pasul 6: Auto-Trading Bot (Premium)",
-      subtitle: "Lasă bot-ul să facă bani pentru tine 24/7",
+      title: "Step 6: Auto-Trading Bot (Premium)",
+      subtitle: "Let the bot make money for you 24/7",
       content: (
         <div>
           <div className={`p-4 rounded-xl mb-6 flex items-center gap-3 ${theme === 'dark' ? 'bg-purple-900 bg-opacity-30' : 'bg-purple-50'}`}>
             <FaRobot className="text-purple-400 text-3xl" />
             <div>
               <h4 className={`font-bold ${theme === 'dark' ? 'text-purple-300' : 'text-purple-700'}`}>
-                Doar pentru Premium ($99/lună)
+                Premium only ($99/month)
               </h4>
               <p className={theme === 'dark' ? 'text-purple-200' : 'text-purple-600'}>
-                Bot-ul execută automat trade-uri când găsește oportunități profitabile.
+                The bot automatically executes trades when it finds profitable opportunities.
               </p>
             </div>
           </div>
           
-          <h4 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Setări configurabile:</h4>
+          <h4 className={`font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Configurable settings:</h4>
           
           <div className="grid md:grid-cols-3 gap-4 mb-6">
             <div className={`p-4 rounded-lg text-center ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
               <FaCog className="text-2xl text-blue-400 mx-auto mb-2" />
               <p className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Min Profit %</p>
               <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Ex: 2% - bot-ul ignoră oportunități sub acest prag
+                Ex: 2% - bot ignores opportunities below this threshold
               </p>
             </div>
             <div className={`p-4 rounded-lg text-center ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
               <span className="text-2xl">💵</span>
               <p className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Max per Trade</p>
               <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Ex: $100 - limita maximă per tranzacție
+                Ex: $100 - maximum limit per transaction
               </p>
             </div>
             <div className={`p-4 rounded-lg text-center ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
               <span className="text-2xl">📊</span>
               <p className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Daily Limit</p>
               <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                Ex: 10 - maximum trade-uri pe zi
+                Ex: 10 - maximum trades per day
               </p>
             </div>
           </div>
@@ -325,22 +325,22 @@ const GuidePage = () => {
             <button className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl font-bold">
               <FaPlay /> Start Bot
             </button>
-            <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>← Un singur click și bot-ul lucrează!</span>
+            <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>← One click and the bot works!</span>
           </div>
         </div>
       )
     },
     {
-      title: "Gata! Ești pregătit! 🎉",
-      subtitle: "Acum știi tot ce trebuie",
+      title: "Done! You're Ready! 🎉",
+      subtitle: "Now you know everything",
       content: (
         <div className="text-center">
           <div className="text-8xl mb-6">🏆</div>
           <h3 className={`text-2xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-            Felicitări!
+            Congratulations!
           </h3>
           <p className={`text-lg mb-8 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
-            Ai învățat cum să folosești ArbitrajZ. Acum e timpul să faci profit!
+            You've learned how to use ArbitrajZ. Now it's time to make profit!
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -348,19 +348,19 @@ const GuidePage = () => {
               onClick={() => navigate('/register')}
               className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all"
             >
-              Creează Cont Gratuit →
+              Create Free Account →
             </button>
             <button
               onClick={() => navigate('/pricing')}
               className={`px-8 py-4 rounded-xl font-bold ${theme === 'dark' ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 text-gray-900 hover:bg-gray-300'}`}
             >
-              Vezi Planurile
+              View Plans
             </button>
           </div>
           
           <div className={`mt-8 p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
             <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-              Ai întrebări? Scrie-ne la <strong>support@arbitrajz.com</strong>
+              Have questions? Email us at <strong>support@arbitrajz.com</strong>
             </p>
           </div>
         </div>
@@ -381,11 +381,11 @@ const GuidePage = () => {
               <FaArrowLeft className={theme === 'dark' ? 'text-white' : 'text-gray-900'} />
             </button>
             <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              📚 Ghid ArbitrajZ
+              📚 ArbitrajZ Guide
             </span>
           </div>
           <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-            Pas {activeStep + 1} din {steps.length}
+            Step {activeStep + 1} of {steps.length}
           </span>
         </div>
       </header>
@@ -422,7 +422,7 @@ const GuidePage = () => {
               theme === 'dark' ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
             }`}
           >
-            <FaArrowLeft /> Înapoi
+            <FaArrowLeft /> Back
           </button>
           
           {/* Step indicators */}
@@ -447,7 +447,7 @@ const GuidePage = () => {
             disabled={activeStep === steps.length - 1}
             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-600 disabled:opacity-30"
           >
-            Următorul <FaArrowRight />
+            Next <FaArrowRight />
           </button>
         </div>
       </main>
