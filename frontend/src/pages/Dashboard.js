@@ -122,6 +122,15 @@ const Dashboard = () => {
                 <FaCog />
                 <span>API Keys</span>
               </button>
+              {user?.subscription_tier === 'premium' && (
+                <button
+                  onClick={() => navigate('/auto-trading')}
+                  className="px-4 py-2 text-purple-400 hover:text-purple-300 flex items-center space-x-1"
+                >
+                  <FaRobot />
+                  <span>Auto-Bot</span>
+                </button>
+              )}
               {user?.is_admin && (
                 <button
                   onClick={() => navigate('/admin')}

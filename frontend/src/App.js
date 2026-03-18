@@ -11,6 +11,7 @@ import PricingPage from './pages/PricingPage';
 import PaymentSuccess from './pages/PaymentSuccess';
 import SuperAdminPage from './pages/SuperAdminPage';
 import SettingsPage from './pages/SettingsPage';
+import AutoTradingPage from './pages/AutoTradingPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
@@ -74,6 +75,14 @@ function AppContent() {
         element={
           <PrivateRoute>
             <SettingsPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/auto-trading"
+        element={
+          <PrivateRoute>
+            <AutoTradingPage />
           </PrivateRoute>
         }
       />

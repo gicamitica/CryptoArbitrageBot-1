@@ -297,6 +297,7 @@ async def get_me(current_user: User = Depends(get_current_user)):
 # ==================== CRYPTO ROUTES ====================
 
 from exchange_service import ExchangeService, PublicExchangeService, SYMBOL_NAMES
+from cache_service import price_cache, arbitrage_cache, CachedExchangeService
 
 @api_router.get("/crypto/prices")
 async def get_crypto_prices(
@@ -343,11 +344,13 @@ async def get_crypto_prices(
 @api_router.get("/crypto/prices/live")
 async def get_live_crypto_prices(
     symbol: Optional[str] = None,
+    refresh: bool = False,
     current_user: User = Depends(get_current_user)
 ):
-    """Get LIVE crypto prices from user's connected exchanges"""
+    """Get LIVE crypto prices from user's connected exchanges (with caching)"""
     
     exchange_service = ExchangeService(db)
+    cached_service = CachedExchangeService(exchange_service, price_cache, arbitrage_cache)
     
     # Check if user has any connected exchanges
     connected_count = await exchange_service.get_user_connected_exchange_count(current_user.id)
@@ -356,31 +359,25 @@ async def get_live_crypto_prices(
         return {
             "prices": [],
             "is_live": False,
+            "from_cache": False,
             "message": "No exchanges connected. Add API keys in Settings to get live data.",
             "connected_exchanges": 0
         }
     
-    # Fetch live prices
-    try:
-        live_prices = await exchange_service.fetch_all_live_prices(current_user.id)
-        
-        if symbol:
-            live_prices = [p for p in live_prices if p["symbol"] == symbol.upper()]
-        
-        return {
-            "prices": live_prices,
-            "is_live": True,
-            "message": f"Live data from {connected_count} exchange(s)",
-            "connected_exchanges": connected_count
-        }
-    except Exception as e:
-        logger.error(f"Error fetching live prices: {e}")
-        return {
-            "prices": [],
-            "is_live": False,
-            "message": f"Error fetching live data: {str(e)[:100]}",
-            "connected_exchanges": connected_count
-        }
+    # Fetch live prices (with caching)
+    result = await cached_service.get_live_prices(current_user.id, force_refresh=refresh)
+    
+    prices = result["prices"]
+    if symbol:
+        prices = [p for p in prices if p.get("symbol") == symbol.upper()]
+    
+    return {
+        "prices": prices,
+        "is_live": result["is_live"],
+        "from_cache": result.get("from_cache", False),
+        "message": result["message"],
+        "connected_exchanges": connected_count
+    }
 
 @api_router.get("/crypto/arbitrage")
 async def get_arbitrage_opportunities(
@@ -469,6 +466,21 @@ async def get_symbols():
     """Get list of supported crypto symbols"""
     return CRYPTO_SYMBOLS
 
+@api_router.get("/crypto/cache/stats")
+async def get_cache_stats():
+    """Get cache statistics (admin only in production)"""
+    return {
+        "price_cache": price_cache.get_stats(),
+        "arbitrage_cache": arbitrage_cache.get_stats()
+    }
+
+@api_router.post("/crypto/cache/refresh")
+async def refresh_user_cache(current_user: User = Depends(get_current_user)):
+    """Force refresh cache for current user"""
+    await price_cache.invalidate(current_user.id)
+    await arbitrage_cache.invalidate(current_user.id)
+    return {"success": True, "message": "Cache invalidated. Next request will fetch fresh data."}
+
 @api_router.get("/user/features")
 async def get_user_features(current_user: User = Depends(get_current_user)):
     """Get user's feature access based on subscription"""
@@ -531,6 +543,139 @@ async def get_user_features(current_user: User = Depends(get_current_user)):
         "features": user_features,
         "subscription_expires_at": current_user.subscription_expires_at
     }
+
+# ==================== AUTO-TRADING BOT ROUTES ====================
+
+from auto_trading_bot import AutoTradingBot
+
+@api_router.get("/bot/status")
+async def get_bot_status(current_user: User = Depends(get_current_user)):
+    """Get auto-trading bot status (Premium only)"""
+    
+    if current_user.subscription_tier != "premium":
+        raise HTTPException(
+            status_code=403,
+            detail="Auto-trading bot is only available for Premium subscribers."
+        )
+    
+    bot = AutoTradingBot(db)
+    return await bot.get_bot_status(current_user.id)
+
+@api_router.get("/bot/settings")
+async def get_bot_settings(current_user: User = Depends(get_current_user)):
+    """Get bot settings (Premium only)"""
+    
+    if current_user.subscription_tier != "premium":
+        raise HTTPException(
+            status_code=403,
+            detail="Auto-trading bot is only available for Premium subscribers."
+        )
+    
+    bot = AutoTradingBot(db)
+    return await bot.get_bot_settings(current_user.id)
+
+class BotSettingsUpdate(BaseModel):
+    min_profit_percentage: Optional[float] = None
+    max_trade_amount: Optional[float] = None
+    daily_trade_limit: Optional[int] = None
+    allowed_symbols: Optional[List[str]] = None
+    allowed_exchanges: Optional[List[str]] = None
+
+@api_router.put("/bot/settings")
+async def update_bot_settings(
+    settings: BotSettingsUpdate,
+    current_user: User = Depends(get_current_user)
+):
+    """Update bot settings (Premium only)"""
+    
+    if current_user.subscription_tier != "premium":
+        raise HTTPException(
+            status_code=403,
+            detail="Auto-trading bot is only available for Premium subscribers."
+        )
+    
+    bot = AutoTradingBot(db)
+    update_data = {k: v for k, v in settings.model_dump().items() if v is not None}
+    return await bot.update_bot_settings(current_user.id, update_data)
+
+@api_router.post("/bot/enable")
+async def enable_bot(current_user: User = Depends(get_current_user)):
+    """Enable auto-trading bot (Premium only)"""
+    
+    if current_user.subscription_tier != "premium":
+        raise HTTPException(
+            status_code=403,
+            detail="Auto-trading bot is only available for Premium subscribers."
+        )
+    
+    bot = AutoTradingBot(db)
+    return await bot.enable_bot(current_user.id)
+
+@api_router.post("/bot/disable")
+async def disable_bot(current_user: User = Depends(get_current_user)):
+    """Disable auto-trading bot"""
+    
+    if current_user.subscription_tier != "premium":
+        raise HTTPException(
+            status_code=403,
+            detail="Auto-trading bot is only available for Premium subscribers."
+        )
+    
+    bot = AutoTradingBot(db)
+    return await bot.disable_bot(current_user.id)
+
+@api_router.get("/bot/trades")
+async def get_bot_trades(
+    limit: int = 50,
+    current_user: User = Depends(get_current_user)
+):
+    """Get auto-trading history (Premium only)"""
+    
+    if current_user.subscription_tier != "premium":
+        raise HTTPException(
+            status_code=403,
+            detail="Auto-trading bot is only available for Premium subscribers."
+        )
+    
+    bot = AutoTradingBot(db)
+    return await bot.get_bot_trade_history(current_user.id, limit)
+
+@api_router.post("/bot/test-trade")
+async def test_bot_trade(current_user: User = Depends(get_current_user)):
+    """Execute a test auto-trade with a simulated opportunity (Premium only)"""
+    
+    if current_user.subscription_tier != "premium":
+        raise HTTPException(
+            status_code=403,
+            detail="Auto-trading bot is only available for Premium subscribers."
+        )
+    
+    bot = AutoTradingBot(db)
+    
+    # Create a test opportunity
+    test_opportunity = {
+        "id": str(uuid.uuid4()),
+        "symbol": "BTC",
+        "buy_exchange": "Binance",
+        "buy_price": 67000.0,
+        "sell_exchange": "Kraken",
+        "sell_price": 67500.0,
+        "profit_percentage": 0.75,
+        "profit_usd": 50.0
+    }
+    
+    # Check if trade should execute
+    should_trade, reason = await bot.should_execute_trade(current_user.id, test_opportunity)
+    
+    if not should_trade:
+        return {
+            "success": False,
+            "message": f"Trade not executed: {reason}",
+            "opportunity": test_opportunity
+        }
+    
+    # Execute the trade
+    return await bot.execute_auto_trade(current_user.id, test_opportunity)
 
 # ==================== TRADING ROUTES ====================
 
