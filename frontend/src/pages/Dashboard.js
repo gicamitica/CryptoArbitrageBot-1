@@ -189,15 +189,19 @@ const Dashboard = () => {
             <div className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
               balanceData.is_live 
                 ? 'bg-green-500 bg-opacity-20 border border-green-500' 
-                : 'bg-gray-700'
+                : 'bg-red-500 bg-opacity-20 border border-red-500'
             }`}>
               {balanceData.is_live ? (
                 <FaWifi className="text-green-400 text-xs animate-pulse" title="Live Balance" />
               ) : (
-                <FaDatabase className="text-gray-400 text-xs" title="Demo Balance" />
+                <FaDatabase className="text-red-400 text-xs animate-pulse" title="Demo Balance" />
               )}
-              <div>
-                <span className={`text-xs ${balanceData.is_live ? 'text-green-400' : 'text-gray-500'}`}>
+              <div className="flex items-center">
+                <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+                  balanceData.is_live 
+                    ? 'bg-green-500 text-white' 
+                    : 'bg-red-500 text-white animate-pulse'
+                }`}>
                   {balanceData.is_live ? 'LIVE' : 'DEMO'}
                 </span>
                 <span className={`ml-2 font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
@@ -332,22 +336,22 @@ const Dashboard = () => {
         <div className={`mb-6 p-3 rounded-lg flex items-center justify-between ${
           isLive 
             ? 'bg-green-500 bg-opacity-20 border border-green-500' 
-            : 'bg-yellow-500 bg-opacity-20 border border-yellow-500'
+            : 'bg-red-500 bg-opacity-20 border border-red-500'
         }`}>
           <div className="flex items-center gap-3">
             {isLive ? (
               <>
                 <FaWifi className="text-green-400 animate-pulse" />
-                <span className="text-green-400 font-semibold">LIVE DATA</span>
+                <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">LIVE DATA</span>
                 <span className={`text-sm ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>
                   {dataMessage} ({connectedExchanges} exchanges)
                 </span>
               </>
             ) : (
               <>
-                <FaDatabase className="text-yellow-400" />
-                <span className="text-yellow-400 font-semibold">DEMO DATA</span>
-                <span className={`text-sm ${theme === 'dark' ? 'text-yellow-300' : 'text-yellow-700'}`}>
+                <FaDatabase className="text-red-400 animate-pulse" />
+                <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded animate-pulse">⚠️ DEMO DATA</span>
+                <span className={`text-sm ${theme === 'dark' ? 'text-red-300' : 'text-red-700'}`}>
                   {dataMessage || 'Connect exchanges for live prices'}
                 </span>
               </>

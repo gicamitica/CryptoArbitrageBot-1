@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import axios from 'axios';
-import { FaBitcoin, FaArrowLeft, FaRobot } from 'react-icons/fa';
+import { FaBitcoin, FaArrowLeft, FaRobot, FaWifi, FaDatabase } from 'react-icons/fa';
 import UpgradePrompt from '../components/UpgradePrompt';
 
 const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -19,18 +19,40 @@ const TradingPage = () => {
   const [tradeAmount, setTradeAmount] = useState(100);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  
+  // Balance state
+  const [balanceData, setBalanceData] = useState({
+    is_live: false,
+    total_usd: user?.balance || 1000,
+    connected_count: 0
+  });
 
   // Check if user has access to trading
   const userPlan = user?.subscription_tier || 'free';
   const hasAccess = userPlan !== 'free';
 
+  const headers = { Authorization: `Bearer ${token}` };
+
   useEffect(() => {
     if (hasAccess) {
       fetchData();
-      const interval = setInterval(fetchData, 5000);
+      fetchBalance();
+      const interval = setInterval(() => {
+        fetchData();
+        fetchBalance();
+      }, 10000);
       return () => clearInterval(interval);
     }
   }, [hasAccess]);
+
+  const fetchBalance = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/user/balance`, { headers });
+      setBalanceData(response.data);
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -144,12 +166,55 @@ const TradingPage = () => {
             <img src="/arbitrajz-logo.jpg" alt="ArbitrajZ Logo" className="h-10 w-10 rounded-full" />
             <span className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Trading</span>
           </div>
-          <div className={`px-4 py-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}`}>
-            <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Balance: </span>
-            <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>${user?.balance?.toFixed(2)}</span>
+          
+          {/* Balance Display with Live/Demo indicator */}
+          <div className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
+            balanceData.is_live 
+              ? 'bg-green-500 bg-opacity-20 border border-green-500' 
+              : 'bg-red-500 bg-opacity-20 border border-red-500'
+          }`}>
+            {balanceData.is_live ? (
+              <FaWifi className="text-green-400 text-xs animate-pulse" title="Live Balance" />
+            ) : (
+              <FaDatabase className="text-red-400 text-xs animate-pulse" title="Demo Balance" />
+            )}
+            <div className="flex items-center">
+              <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+                balanceData.is_live 
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-red-500 text-white animate-pulse'
+              }`}>
+                {balanceData.is_live ? 'LIVE' : 'DEMO'}
+              </span>
+              <span className={`ml-2 font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                ${balanceData.total_usd?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            </div>
           </div>
         </div>
       </header>
+
+      {/* Demo Mode Warning Banner */}
+      {!balanceData.is_live && (
+        <div className="bg-red-500 bg-opacity-20 border-b border-red-500 px-6 py-3">
+          <div className="container mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded animate-pulse">
+                ⚠️ DEMO MODE
+              </span>
+              <span className="text-red-300 text-sm">
+                You are trading with simulated funds. Connect exchange API keys for real trading.
+              </span>
+            </div>
+            <button
+              onClick={() => navigate('/settings')}
+              className="px-4 py-1.5 bg-red-500 text-white text-sm font-semibold rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Connect Exchange
+            </button>
+          </div>
+        </div>
+      )}
 
       <main className="container mx-auto px-6 py-8">
         <div className="grid md:grid-cols-2 gap-8">
