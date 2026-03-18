@@ -66,8 +66,8 @@ const PaymentSuccess = () => {
 
         {status === 'success' && (
           <>
-            <div className="text-6xl mb-6">✅</div>
-            <h2 className="text-2xl font-bold text-green-400 mb-4">Payment Successful!</h2>
+            <div className="text-6xl mb-6" data-testid="payment-success-icon">✅</div>
+            <h2 className="text-2xl font-bold text-green-400 mb-4" data-testid="payment-success-title">Payment Successful!</h2>
             <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>{message}</p>
             <p className={`mt-4 text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Redirecting to dashboard...</p>
           </>
@@ -75,8 +75,8 @@ const PaymentSuccess = () => {
 
         {status === 'error' && (
           <>
-            <div className="text-6xl mb-6">❌</div>
-            <h2 className="text-2xl font-bold text-red-400 mb-4">Payment Error</h2>
+            <div className="text-6xl mb-6" data-testid="payment-error-icon">❌</div>
+            <h2 className="text-2xl font-bold text-red-400 mb-4" data-testid="payment-error-title">Payment Error</h2>
             <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>{message}</p>
             <button
               onClick={() => navigate('/pricing')}

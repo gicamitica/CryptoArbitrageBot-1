@@ -147,6 +147,7 @@ const PricingPage = () => {
               </ul>
 
               <button
+                data-testid={`checkout-${plan.id}-btn`}
                 onClick={() => handleCheckout(plan.id)}
                 disabled={loading === plan.id || (user && user.subscription_tier === plan.id)}
                 className={`w-full py-3 rounded-lg font-bold transition-all ${

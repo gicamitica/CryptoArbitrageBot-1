@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// Login page with authentication
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { FaBitcoin } from 'react-icons/fa';
@@ -51,6 +52,7 @@ const LoginPage = () => {
               <input
                 type="email"
                 required
+                data-testid="login-email-input"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors"
@@ -65,6 +67,7 @@ const LoginPage = () => {
               <input
                 type="password"
                 required
+                data-testid="login-password-input"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors"
@@ -75,6 +78,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={loading}
+              data-testid="login-submit-btn"
               className="w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Logging in...' : 'Login'}
