@@ -296,22 +296,173 @@ async def get_me(current_user: User = Depends(get_current_user)):
 
 # ==================== CRYPTO ROUTES ====================
 
-@api_router.get("/crypto/prices", response_model=List[CryptoPrice])
-async def get_crypto_prices(symbol: Optional[str] = None):
-    """Get current crypto prices (mock data)"""
+from exchange_service import ExchangeService, PublicExchangeService, SYMBOL_NAMES
+
+@api_router.get("/crypto/prices")
+async def get_crypto_prices(
+    symbol: Optional[str] = None,
+    live: bool = False,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(lambda: None)
+):
+    """Get current crypto prices - live data if user has connected exchanges, otherwise mock"""
+    
+    # Try to get user if authenticated
+    user_id = None
+    auth_header = None
+    
+    # Check for optional auth
+    try:
+        from fastapi import Request
+        # This is a simplified check - we'll handle auth in the request
+        pass
+    except:
+        pass
+    
+    # For now, return mock data (live data requires auth)
+    # The /crypto/prices/live endpoint handles authenticated live data
     prices = generate_mock_prices()
     
     if symbol:
         prices = [p for p in prices if p.symbol == symbol.upper()]
     
-    return prices
+    # Add is_live flag
+    return [
+        {
+            "symbol": p.symbol,
+            "name": p.name,
+            "price_usd": p.price_usd,
+            "change_24h": p.change_24h,
+            "volume_24h": p.volume_24h,
+            "exchange": p.exchange,
+            "timestamp": p.timestamp.isoformat() if hasattr(p.timestamp, 'isoformat') else str(p.timestamp),
+            "is_live": False
+        }
+        for p in prices
+    ]
 
-@api_router.get("/crypto/arbitrage", response_model=List[ArbitrageOpportunity])
-async def get_arbitrage_opportunities():
-    """Get current arbitrage opportunities"""
+@api_router.get("/crypto/prices/live")
+async def get_live_crypto_prices(
+    symbol: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    """Get LIVE crypto prices from user's connected exchanges"""
+    
+    exchange_service = ExchangeService(db)
+    
+    # Check if user has any connected exchanges
+    connected_count = await exchange_service.get_user_connected_exchange_count(current_user.id)
+    
+    if connected_count == 0:
+        return {
+            "prices": [],
+            "is_live": False,
+            "message": "No exchanges connected. Add API keys in Settings to get live data.",
+            "connected_exchanges": 0
+        }
+    
+    # Fetch live prices
+    try:
+        live_prices = await exchange_service.fetch_all_live_prices(current_user.id)
+        
+        if symbol:
+            live_prices = [p for p in live_prices if p["symbol"] == symbol.upper()]
+        
+        return {
+            "prices": live_prices,
+            "is_live": True,
+            "message": f"Live data from {connected_count} exchange(s)",
+            "connected_exchanges": connected_count
+        }
+    except Exception as e:
+        logger.error(f"Error fetching live prices: {e}")
+        return {
+            "prices": [],
+            "is_live": False,
+            "message": f"Error fetching live data: {str(e)[:100]}",
+            "connected_exchanges": connected_count
+        }
+
+@api_router.get("/crypto/arbitrage")
+async def get_arbitrage_opportunities(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(lambda: None)
+):
+    """Get current arbitrage opportunities (mock data)"""
     prices = generate_mock_prices()
     opportunities = detect_arbitrage_opportunities(prices)
     return opportunities
+
+@api_router.get("/crypto/arbitrage/live")
+async def get_live_arbitrage_opportunities(
+    current_user: User = Depends(get_current_user)
+):
+    """Get LIVE arbitrage opportunities from user's connected exchanges"""
+    
+    exchange_service = ExchangeService(db)
+    connected_count = await exchange_service.get_user_connected_exchange_count(current_user.id)
+    
+    if connected_count < 2:
+        return {
+            "opportunities": [],
+            "is_live": False,
+            "message": "Need at least 2 connected exchanges to detect arbitrage opportunities.",
+            "connected_exchanges": connected_count
+        }
+    
+    try:
+        # Fetch live prices
+        live_prices = await exchange_service.fetch_all_live_prices(current_user.id)
+        
+        if not live_prices:
+            return {
+                "opportunities": [],
+                "is_live": False,
+                "message": "No price data available from connected exchanges.",
+                "connected_exchanges": connected_count
+            }
+        
+        # Convert to CryptoPrice objects for the detector
+        price_objects = []
+        for p in live_prices:
+            price_objects.append(CryptoPrice(
+                symbol=p["symbol"],
+                name=p["name"],
+                price_usd=p["price_usd"],
+                change_24h=p["change_24h"],
+                volume_24h=p["volume_24h"],
+                exchange=p["exchange"]
+            ))
+        
+        # Detect opportunities
+        opportunities = detect_arbitrage_opportunities(price_objects)
+        
+        return {
+            "opportunities": [
+                {
+                    "id": opp.id,
+                    "symbol": opp.symbol,
+                    "buy_exchange": opp.buy_exchange,
+                    "buy_price": opp.buy_price,
+                    "sell_exchange": opp.sell_exchange,
+                    "sell_price": opp.sell_price,
+                    "profit_percentage": opp.profit_percentage,
+                    "profit_usd": opp.profit_usd,
+                    "timestamp": opp.timestamp.isoformat() if hasattr(opp.timestamp, 'isoformat') else str(opp.timestamp),
+                    "is_live": True
+                }
+                for opp in opportunities
+            ],
+            "is_live": True,
+            "message": f"Live opportunities from {connected_count} exchanges",
+            "connected_exchanges": connected_count
+        }
+    except Exception as e:
+        logger.error(f"Error detecting live arbitrage: {e}")
+        return {
+            "opportunities": [],
+            "is_live": False,
+            "message": f"Error: {str(e)[:100]}",
+            "connected_exchanges": connected_count
+        }
 
 @api_router.get("/crypto/symbols")
 async def get_symbols():

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import axios from 'axios';
-import { FaBitcoin, FaSignOutAlt, FaMoon, FaSun, FaChartLine, FaRobot, FaUserShield, FaCog } from 'react-icons/fa';
+import { FaBitcoin, FaSignOutAlt, FaMoon, FaSun, FaChartLine, FaRobot, FaUserShield, FaCog, FaWifi, FaDatabase } from 'react-icons/fa';
 
 const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -15,21 +15,65 @@ const Dashboard = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSymbol, setSelectedSymbol] = useState('BTC');
+  const [isLive, setIsLive] = useState(false);
+  const [connectedExchanges, setConnectedExchanges] = useState(0);
+  const [dataMessage, setDataMessage] = useState('');
+
+  const headers = { Authorization: `Bearer ${token}` };
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 5000); // Update every 5 seconds
+    const interval = setInterval(fetchData, 10000); // Update every 10 seconds
     return () => clearInterval(interval);
-  }, []);
+  }, [token]);
 
   const fetchData = async () => {
     try {
-      const [pricesRes, oppsRes] = await Promise.all([
-        axios.get(`${API_URL}/crypto/prices`),
-        axios.get(`${API_URL}/crypto/arbitrage`),
-      ]);
-      setPrices(pricesRes.data);
-      setOpportunities(oppsRes.data);
+      // Try to get live data first
+      let pricesData = [];
+      let oppsData = [];
+      let live = false;
+      let exchanges = 0;
+      let message = '';
+
+      try {
+        // Try live endpoints first
+        const [livePricesRes, liveOppsRes] = await Promise.all([
+          axios.get(`${API_URL}/crypto/prices/live`, { headers }),
+          axios.get(`${API_URL}/crypto/arbitrage/live`, { headers })
+        ]);
+
+        if (livePricesRes.data.is_live && livePricesRes.data.prices.length > 0) {
+          pricesData = livePricesRes.data.prices;
+          live = true;
+          exchanges = livePricesRes.data.connected_exchanges;
+          message = livePricesRes.data.message;
+        }
+
+        if (liveOppsRes.data.is_live && liveOppsRes.data.opportunities) {
+          oppsData = liveOppsRes.data.opportunities;
+        }
+      } catch (liveError) {
+        // Live data failed, will fall back to mock
+        console.log('Live data not available, using mock data');
+      }
+
+      // Fall back to mock data if no live data
+      if (pricesData.length === 0) {
+        const [pricesRes, oppsRes] = await Promise.all([
+          axios.get(`${API_URL}/crypto/prices`),
+          axios.get(`${API_URL}/crypto/arbitrage`),
+        ]);
+        pricesData = pricesRes.data;
+        oppsData = oppsRes.data;
+        message = 'Demo data - Connect exchanges for live prices';
+      }
+
+      setPrices(pricesData);
+      setOpportunities(oppsData);
+      setIsLive(live);
+      setConnectedExchanges(exchanges);
+      setDataMessage(message);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -113,6 +157,41 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-8">
+        {/* Data Status Banner */}
+        <div className={`mb-6 p-3 rounded-lg flex items-center justify-between ${
+          isLive 
+            ? 'bg-green-500 bg-opacity-20 border border-green-500' 
+            : 'bg-yellow-500 bg-opacity-20 border border-yellow-500'
+        }`}>
+          <div className="flex items-center gap-3">
+            {isLive ? (
+              <>
+                <FaWifi className="text-green-400 animate-pulse" />
+                <span className="text-green-400 font-semibold">LIVE DATA</span>
+                <span className={`text-sm ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>
+                  {dataMessage} ({connectedExchanges} exchanges)
+                </span>
+              </>
+            ) : (
+              <>
+                <FaDatabase className="text-yellow-400" />
+                <span className="text-yellow-400 font-semibold">DEMO DATA</span>
+                <span className={`text-sm ${theme === 'dark' ? 'text-yellow-300' : 'text-yellow-700'}`}>
+                  {dataMessage || 'Connect exchanges for live prices'}
+                </span>
+              </>
+            )}
+          </div>
+          {!isLive && (
+            <button
+              onClick={() => navigate('/settings')}
+              className="px-3 py-1 bg-yellow-500 text-black text-sm font-semibold rounded-lg hover:bg-yellow-400 transition-colors"
+            >
+              Connect Exchanges
+            </button>
+          )}
+        </div>
+
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
