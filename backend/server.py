@@ -936,6 +936,7 @@ async def startup_event():
         admin_doc = admin_user.model_dump()
         admin_doc['created_at'] = admin_doc['created_at'].isoformat()
         admin_doc['password'] = hash_password("admin123")
+        admin_doc['is_verified'] = True  # Admin is pre-verified
         await db.users.insert_one(admin_doc)
         logger.info("✅ Admin user created: admin@cryptoarbitrage.com / admin123")
 

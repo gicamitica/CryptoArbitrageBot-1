@@ -53,13 +53,14 @@ const RegisterPage = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" data-testid="register-form">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Full Name
               </label>
               <input
                 type="text"
+                data-testid="register-fullname-input"
                 value={formData.full_name}
                 onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors"
@@ -74,6 +75,7 @@ const RegisterPage = () => {
               <input
                 type="email"
                 required
+                data-testid="register-email-input"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors"
@@ -88,6 +90,7 @@ const RegisterPage = () => {
               <input
                 type="text"
                 required
+                data-testid="register-username-input"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors"
@@ -103,6 +106,7 @@ const RegisterPage = () => {
                 type="password"
                 required
                 minLength={6}
+                data-testid="register-password-input"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors"
@@ -114,6 +118,7 @@ const RegisterPage = () => {
             <button
               type="submit"
               disabled={loading}
+              data-testid="register-submit-btn"
               className="w-full px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-6"
             >
               {loading ? 'Creating account...' : 'Create Account'}
