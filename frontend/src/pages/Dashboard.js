@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import axios from 'axios';
-import { FaBitcoin, FaSignOutAlt, FaMoon, FaSun, FaChartLine, FaRobot, FaUserShield, FaCog, FaWifi, FaDatabase } from 'react-icons/fa';
+import { FaBitcoin, FaSignOutAlt, FaMoon, FaSun, FaChartLine, FaRobot, FaUserShield, FaCog, FaWifi, FaDatabase, FaUser, FaChevronDown, FaCrown, FaEnvelope } from 'react-icons/fa';
 
 const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -18,8 +18,21 @@ const Dashboard = () => {
   const [isLive, setIsLive] = useState(false);
   const [connectedExchanges, setConnectedExchanges] = useState(0);
   const [dataMessage, setDataMessage] = useState('');
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
 
   const headers = { Authorization: `Bearer ${token}` };
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -154,12 +167,123 @@ const Dashboard = () => {
               <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Balance: </span>
               <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>${user?.balance?.toFixed(2)}</span>
             </div>
-            <button
-              onClick={handleLogout}
-              className={`p-2 rounded-lg ${theme === 'dark' ? 'text-gray-300 hover:text-white hover:bg-gray-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'}`}
-            >
-              <FaSignOutAlt />
-            </button>
+            
+            {/* Profile Dropdown */}
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                  theme === 'dark' 
+                    ? 'bg-gray-700 hover:bg-gray-600 text-white' 
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-900'
+                }`}
+                data-testid="profile-dropdown-btn"
+              >
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  user?.subscription_tier === 'premium' ? 'bg-gradient-to-r from-purple-500 to-pink-500' :
+                  user?.subscription_tier === 'pro' ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :
+                  user?.subscription_tier === 'test' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                  'bg-gray-500'
+                }`}>
+                  <FaUser className="text-white text-sm" />
+                </div>
+                <FaChevronDown className={`text-xs transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Dropdown Menu */}
+              {profileOpen && (
+                <div className={`absolute right-0 mt-2 w-72 rounded-xl shadow-2xl border z-50 overflow-hidden ${
+                  theme === 'dark' 
+                    ? 'bg-gray-800 border-gray-700' 
+                    : 'bg-white border-gray-200'
+                }`}>
+                  {/* User Info Header */}
+                  <div className={`p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                        user?.subscription_tier === 'premium' ? 'bg-gradient-to-r from-purple-500 to-pink-500' :
+                        user?.subscription_tier === 'pro' ? 'bg-gradient-to-r from-blue-500 to-cyan-500' :
+                        user?.subscription_tier === 'test' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                        'bg-gray-500'
+                      }`}>
+                        <FaUser className="text-white text-lg" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`font-semibold truncate ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                          {user?.full_name || user?.username}
+                        </p>
+                        <p className={`text-sm truncate ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                          {user?.email}
+                        </p>
+                      </div>
+                    </div>
+                    {/* Subscription Badge */}
+                    <div className="mt-3">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                        user?.subscription_tier === 'premium' ? 'bg-purple-500 bg-opacity-20 text-purple-400' :
+                        user?.subscription_tier === 'pro' ? 'bg-blue-500 bg-opacity-20 text-blue-400' :
+                        user?.subscription_tier === 'test' ? 'bg-green-500 bg-opacity-20 text-green-400' :
+                        'bg-gray-500 bg-opacity-20 text-gray-400'
+                      }`}>
+                        <FaCrown className="mr-1" />
+                        {user?.subscription_tier?.charAt(0).toUpperCase() + user?.subscription_tier?.slice(1) || 'Free'} Plan
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="py-2">
+                    <button
+                      onClick={() => { setProfileOpen(false); navigate('/settings'); }}
+                      className={`w-full flex items-center px-4 py-3 text-left transition-colors ${
+                        theme === 'dark' 
+                          ? 'hover:bg-gray-700 text-gray-300' 
+                          : 'hover:bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      <FaCog className="mr-3" />
+                      <span>API Keys & Settings</span>
+                    </button>
+                    <button
+                      onClick={() => { setProfileOpen(false); navigate('/pricing'); }}
+                      className={`w-full flex items-center px-4 py-3 text-left transition-colors ${
+                        theme === 'dark' 
+                          ? 'hover:bg-gray-700 text-gray-300' 
+                          : 'hover:bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      <FaCrown className="mr-3" />
+                      <span>Upgrade Plan</span>
+                    </button>
+                    <button
+                      onClick={() => { setProfileOpen(false); navigate('/guide'); }}
+                      className={`w-full flex items-center px-4 py-3 text-left transition-colors ${
+                        theme === 'dark' 
+                          ? 'hover:bg-gray-700 text-gray-300' 
+                          : 'hover:bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      <FaChartLine className="mr-3" />
+                      <span>User Guide</span>
+                    </button>
+                  </div>
+
+                  {/* Logout */}
+                  <div className={`border-t py-2 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <button
+                      onClick={handleLogout}
+                      className={`w-full flex items-center px-4 py-3 text-left transition-colors text-red-400 ${
+                        theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                      }`}
+                      data-testid="logout-btn"
+                    >
+                      <FaSignOutAlt className="mr-3" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
