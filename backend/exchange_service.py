@@ -202,6 +202,129 @@ class ExchangeService:
         })
         return count
 
+    async def fetch_balance_from_exchange(self, exchange_config: Dict) -> Dict:
+        """Fetch balance from a single exchange"""
+        exchange = self.create_exchange_instance(
+            exchange_config["exchange_id"],
+            exchange_config["api_key"],
+            exchange_config["api_secret"],
+            exchange_config.get("passphrase")
+        )
+        
+        if not exchange:
+            return {"exchange": exchange_config["exchange_id"], "balances": [], "total_usd": 0, "error": "Failed to create exchange instance"}
+        
+        exchange_name = EXCHANGE_NAMES.get(exchange_config["exchange_id"], exchange_config["exchange_id"])
+        
+        try:
+            loop = asyncio.get_event_loop()
+            balance = await loop.run_in_executor(None, exchange.fetch_balance)
+            
+            # Get non-zero balances
+            non_zero_balances = []
+            total_usd = 0
+            
+            if balance and 'total' in balance:
+                for currency, amount in balance['total'].items():
+                    if amount and amount > 0:
+                        non_zero_balances.append({
+                            "currency": currency,
+                            "amount": amount,
+                            "free": balance.get('free', {}).get(currency, 0),
+                            "used": balance.get('used', {}).get(currency, 0)
+                        })
+            
+            # Try to get USD value for major coins
+            try:
+                tickers = await loop.run_in_executor(None, exchange.fetch_tickers, ['BTC/USDT', 'ETH/USDT', 'BNB/USDT', 'SOL/USDT', 'XRP/USDT'])
+                
+                price_map = {}
+                for symbol, ticker in tickers.items():
+                    base = symbol.split('/')[0]
+                    price_map[base] = ticker.get('last', 0) or 0
+                
+                # Calculate total USD value
+                for bal in non_zero_balances:
+                    currency = bal['currency']
+                    amount = bal['amount']
+                    
+                    if currency in ['USDT', 'USD', 'USDC', 'BUSD', 'DAI']:
+                        bal['usd_value'] = amount
+                        total_usd += amount
+                    elif currency in price_map:
+                        usd_val = amount * price_map[currency]
+                        bal['usd_value'] = usd_val
+                        total_usd += usd_val
+                    else:
+                        # Try to fetch individual ticker
+                        try:
+                            ticker = await loop.run_in_executor(None, exchange.fetch_ticker, f"{currency}/USDT")
+                            if ticker and ticker.get('last'):
+                                usd_val = amount * ticker['last']
+                                bal['usd_value'] = usd_val
+                                total_usd += usd_val
+                        except:
+                            bal['usd_value'] = 0  # Unknown USD value
+                            
+            except Exception as e:
+                logger.debug(f"Failed to fetch tickers for USD conversion: {e}")
+            
+            return {
+                "exchange": exchange_name,
+                "exchange_id": exchange_config["exchange_id"],
+                "balances": non_zero_balances,
+                "total_usd": total_usd,
+                "error": None
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to fetch balance from {exchange_name}: {e}")
+            return {
+                "exchange": exchange_name,
+                "exchange_id": exchange_config["exchange_id"],
+                "balances": [],
+                "total_usd": 0,
+                "error": str(e)[:100]
+            }
+
+    async def fetch_total_balance(self, user_id: str) -> Dict:
+        """Fetch total balance from all user's connected exchanges"""
+        exchanges = await self.get_user_exchanges(user_id)
+        
+        if not exchanges:
+            return {
+                "is_live": False,
+                "total_usd": 0,
+                "exchanges": [],
+                "message": "No exchanges connected"
+            }
+        
+        exchange_balances = []
+        grand_total_usd = 0
+        
+        for exchange_config in exchanges:
+            try:
+                balance_data = await self.fetch_balance_from_exchange(exchange_config)
+                exchange_balances.append(balance_data)
+                grand_total_usd += balance_data.get("total_usd", 0)
+            except Exception as e:
+                logger.error(f"Error fetching balance from {exchange_config['exchange_id']}: {e}")
+                exchange_balances.append({
+                    "exchange": EXCHANGE_NAMES.get(exchange_config["exchange_id"], exchange_config["exchange_id"]),
+                    "exchange_id": exchange_config["exchange_id"],
+                    "balances": [],
+                    "total_usd": 0,
+                    "error": str(e)[:100]
+                })
+        
+        return {
+            "is_live": True,
+            "total_usd": grand_total_usd,
+            "exchanges": exchange_balances,
+            "connected_count": len(exchanges),
+            "message": f"Live balance from {len(exchanges)} exchange(s)"
+        }
+
 
 # Public data fetcher (no API key needed - for demo/preview)
 class PublicExchangeService:

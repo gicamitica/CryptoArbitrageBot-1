@@ -574,6 +574,38 @@ async def refresh_user_cache(current_user: User = Depends(get_current_user)):
     await arbitrage_cache.invalidate(current_user.id)
     return {"success": True, "message": "Cache invalidated. Next request will fetch fresh data."}
 
+@api_router.get("/user/balance")
+async def get_user_balance(current_user: User = Depends(get_current_user)):
+    """Get user's total balance from connected exchanges (LIVE) or demo balance"""
+    
+    exchange_service = ExchangeService(db)
+    connected_count = await exchange_service.get_user_connected_exchange_count(current_user.id)
+    
+    if connected_count == 0:
+        # Return demo balance
+        return {
+            "is_live": False,
+            "total_usd": current_user.balance or 1000.0,
+            "exchanges": [],
+            "connected_count": 0,
+            "message": "Demo balance - Connect exchanges for live data"
+        }
+    
+    # Fetch real balance from exchanges
+    try:
+        balance_data = await exchange_service.fetch_total_balance(current_user.id)
+        return balance_data
+    except Exception as e:
+        logger.error(f"Error fetching balance: {e}")
+        return {
+            "is_live": False,
+            "total_usd": current_user.balance or 1000.0,
+            "exchanges": [],
+            "connected_count": connected_count,
+            "message": f"Error fetching live balance: {str(e)[:50]}",
+            "error": str(e)[:100]
+        }
+
 @api_router.get("/user/features")
 async def get_user_features(current_user: User = Depends(get_current_user)):
     """Get user's feature access based on subscription"""

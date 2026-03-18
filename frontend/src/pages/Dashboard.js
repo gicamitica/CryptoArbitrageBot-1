@@ -20,6 +20,14 @@ const Dashboard = () => {
   const [dataMessage, setDataMessage] = useState('');
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
+  
+  // Balance state
+  const [balanceData, setBalanceData] = useState({
+    is_live: false,
+    total_usd: 1000,
+    exchanges: [],
+    connected_count: 0
+  });
 
   const headers = { Authorization: `Bearer ${token}` };
 
@@ -36,9 +44,22 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 10000); // Update every 10 seconds
+    fetchBalance();
+    const interval = setInterval(() => {
+      fetchData();
+      fetchBalance();
+    }, 30000); // Update every 30 seconds
     return () => clearInterval(interval);
   }, [token]);
+
+  const fetchBalance = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/user/balance`, { headers });
+      setBalanceData(response.data);
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -163,9 +184,26 @@ const Dashboard = () => {
             >
               {theme === 'dark' ? <FaSun /> : <FaMoon />}
             </button>
-            <div className={`px-4 py-2 rounded-lg ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}`}>
-              <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Balance: </span>
-              <span className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>${user?.balance?.toFixed(2)}</span>
+            
+            {/* Balance Display with Live/Demo indicator */}
+            <div className={`px-4 py-2 rounded-lg flex items-center space-x-2 ${
+              balanceData.is_live 
+                ? 'bg-green-500 bg-opacity-20 border border-green-500' 
+                : 'bg-gray-700'
+            }`}>
+              {balanceData.is_live ? (
+                <FaWifi className="text-green-400 text-xs animate-pulse" title="Live Balance" />
+              ) : (
+                <FaDatabase className="text-gray-400 text-xs" title="Demo Balance" />
+              )}
+              <div>
+                <span className={`text-xs ${balanceData.is_live ? 'text-green-400' : 'text-gray-500'}`}>
+                  {balanceData.is_live ? 'LIVE' : 'DEMO'}
+                </span>
+                <span className={`ml-2 font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                  ${balanceData.total_usd?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+              </div>
             </div>
             
             {/* Profile Dropdown */}
