@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -244,7 +244,10 @@ def detect_arbitrage_opportunities(prices: List[CryptoPrice]) -> List[ArbitrageO
 
 # ==================== AUTH ROUTES ====================
 
-@api_router.post("/auth/register", response_model=Token)
+from email_service import send_verification_email, send_welcome_email
+import secrets
+
+@api_router.post("/auth/register")
 async def register(user_data: UserCreate):
     # Check if user exists
     existing_user = await db.users.find_one({"email": user_data.email}, {"_id": 0})
@@ -255,7 +258,10 @@ async def register(user_data: UserCreate):
     if existing_username:
         raise HTTPException(status_code=400, detail="Username already taken")
     
-    # Create new user
+    # Generate verification token
+    verification_token = secrets.token_urlsafe(32)
+    
+    # Create new user (unverified)
     user = User(
         email=user_data.email,
         username=user_data.username,
@@ -265,13 +271,93 @@ async def register(user_data: UserCreate):
     user_doc = user.model_dump()
     user_doc['created_at'] = user_doc['created_at'].isoformat()
     user_doc['password'] = hash_password(user_data.password)
+    user_doc['is_verified'] = False
+    user_doc['verification_token'] = verification_token
+    user_doc['verification_token_expires'] = (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
     
     await db.users.insert_one(user_doc)
     
-    # Create access token
-    access_token = create_access_token(data={"sub": user.id})
+    # Send verification email
+    base_url = os.environ.get('FRONTEND_URL', 'https://exchange-verify-demo.preview.emergentagent.com')
+    email_sent = send_verification_email(user.email, user.username, verification_token, base_url)
     
-    return Token(access_token=access_token, token_type="bearer", user=user)
+    return {
+        "success": True,
+        "message": "Registration successful! Please check your email to verify your account.",
+        "email_sent": email_sent,
+        "user_id": user.id
+    }
+
+@api_router.post("/auth/verify-email")
+async def verify_email(token: str):
+    """Verify email with token"""
+    user_doc = await db.users.find_one({"verification_token": token}, {"_id": 0})
+    
+    if not user_doc:
+        raise HTTPException(status_code=400, detail="Invalid or expired verification link")
+    
+    # Check if token expired
+    expires_str = user_doc.get('verification_token_expires', '2000-01-01')
+    expires_at = datetime.fromisoformat(expires_str)
+    # Ensure timezone aware comparison
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    
+    if datetime.now(timezone.utc) > expires_at:
+        raise HTTPException(status_code=400, detail="Verification link has expired. Please request a new one.")
+    
+    # Update user as verified
+    await db.users.update_one(
+        {"id": user_doc["id"]},
+        {
+            "$set": {"is_verified": True},
+            "$unset": {"verification_token": "", "verification_token_expires": ""}
+        }
+    )
+    
+    # Send welcome email
+    send_welcome_email(user_doc["email"], user_doc["username"])
+    
+    # Create access token for auto-login
+    access_token = create_access_token(data={"sub": user_doc["id"]})
+    
+    return {
+        "success": True,
+        "message": "Email verified successfully! Welcome to ArbitrajZ!",
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+
+@api_router.post("/auth/resend-verification")
+async def resend_verification(email: str):
+    """Resend verification email"""
+    user_doc = await db.users.find_one({"email": email}, {"_id": 0})
+    
+    if not user_doc:
+        # Don't reveal if email exists
+        return {"success": True, "message": "If this email is registered, a verification link has been sent."}
+    
+    if user_doc.get('is_verified', False):
+        return {"success": True, "message": "This email is already verified. You can login."}
+    
+    # Generate new token
+    verification_token = secrets.token_urlsafe(32)
+    
+    await db.users.update_one(
+        {"email": email},
+        {
+            "$set": {
+                "verification_token": verification_token,
+                "verification_token_expires": (datetime.now(timezone.utc) + timedelta(hours=24)).isoformat()
+            }
+        }
+    )
+    
+    # Send verification email
+    base_url = os.environ.get('FRONTEND_URL', 'https://exchange-verify-demo.preview.emergentagent.com')
+    send_verification_email(email, user_doc["username"], verification_token, base_url)
+    
+    return {"success": True, "message": "Verification email sent! Please check your inbox."}
 
 @api_router.post("/auth/login", response_model=Token)
 async def login(credentials: UserLogin):
@@ -281,6 +367,13 @@ async def login(credentials: UserLogin):
     
     if not verify_password(credentials.password, user_doc['password']):
         raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Check if email is verified
+    if not user_doc.get('is_verified', True):  # Default True for old users
+        raise HTTPException(
+            status_code=403, 
+            detail="Please verify your email before logging in. Check your inbox or request a new verification link."
+        )
     
     if isinstance(user_doc.get('created_at'), str):
         user_doc['created_at'] = datetime.fromisoformat(user_doc['created_at'])

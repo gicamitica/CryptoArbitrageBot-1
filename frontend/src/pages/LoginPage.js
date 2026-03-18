@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-// Login page with authentication
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { FaBitcoin } from 'react-icons/fa';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [needsVerification, setNeedsVerification] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setNeedsVerification(false);
     setLoading(true);
 
     const result = await login(formData.email, formData.password);
@@ -21,6 +21,11 @@ const LoginPage = () => {
     if (result.success) {
       navigate('/dashboard');
     } else {
+      // Check if the error is about email verification
+      if (result.error && result.error.toLowerCase().includes('verify')) {
+        setNeedsVerification(true);
+        localStorage.setItem('pendingVerificationEmail', formData.email);
+      }
       setError(result.error);
     }
     setLoading(false);
@@ -41,6 +46,16 @@ const LoginPage = () => {
           {error && (
             <div className="mb-4 p-3 bg-red-500 bg-opacity-20 border border-red-500 rounded-lg text-red-300 text-sm">
               {error}
+              {needsVerification && (
+                <div className="mt-2">
+                  <Link 
+                    to="/check-email" 
+                    className="text-blue-400 hover:text-blue-300 underline"
+                  >
+                    Resend verification email →
+                  </Link>
+                </div>
+              )}
             </div>
           )}
 

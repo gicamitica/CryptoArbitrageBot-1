@@ -13,6 +13,8 @@ import SuperAdminPage from './pages/SuperAdminPage';
 import SettingsPage from './pages/SettingsPage';
 import AutoTradingPage from './pages/AutoTradingPage';
 import GuidePage from './pages/GuidePage';
+import CheckEmailPage from './pages/CheckEmailPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
@@ -54,6 +56,8 @@ function AppContent() {
       <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <RegisterPage />} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/guide" element={<GuidePage />} />
+      <Route path="/check-email" element={<CheckEmailPage />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="/super-admin" element={<SuperAdminPage />} />
       <Route

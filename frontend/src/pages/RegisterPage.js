@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { FaBitcoin } from 'react-icons/fa';
+import axios from 'axios';
+
+const API_URL = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const { register } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -20,19 +20,19 @@ const RegisterPage = () => {
     setError('');
     setLoading(true);
 
-    const result = await register(
-      formData.email,
-      formData.username,
-      formData.password,
-      formData.full_name
-    );
-    
-    if (result.success) {
-      navigate('/dashboard');
-    } else {
-      setError(result.error);
+    try {
+      const response = await axios.post(`${API_URL}/auth/register`, formData);
+      
+      if (response.data.success) {
+        // Store email for check-email page
+        localStorage.setItem('pendingVerificationEmail', formData.email);
+        navigate('/check-email');
+      }
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -102,11 +102,13 @@ const RegisterPage = () => {
               <input
                 type="password"
                 required
+                minLength={6}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors"
                 placeholder="••••••••"
               />
+              <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
             </div>
 
             <button
