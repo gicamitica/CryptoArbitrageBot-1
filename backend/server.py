@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone, timedelta
-import jwt
+from jose import jwt, JWTError
 from passlib.context import CryptContext
 import random
 import asyncio
@@ -137,7 +137,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         return User(**user_doc)
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.JWTError:
+    except JWTError:
         raise HTTPException(status_code=401, detail="Could not validate credentials")
 
 async def get_admin_user(current_user: User = Depends(get_current_user)) -> User:
